@@ -1,0 +1,15 @@
+{
+  "name": "online-exam-portal",
+  "version": "1.0.0",
+  "description": "Online Exam Portal (OEP) - Software Engineering Team 9 Project, PES University",
+  "scripts": {
+    "db:reset": "cd backend && npm run db:reset",
+    "test": "cd backend && npm test",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build"
+  },
+  "keywords": ["pes-university", "software-engineering", "online-exam-portal"],
+  "author": "Team 9",
+  "license": "ISC"
+}

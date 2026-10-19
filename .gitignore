@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build artifacts
+dist/
+build/
+
+# Local Environment & Database
+.env
+.env.local
+*.log
+*.sqlite
+database.sqlite
+
+# Editor & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
