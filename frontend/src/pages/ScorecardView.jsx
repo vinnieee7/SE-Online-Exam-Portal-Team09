@@ -8,22 +8,8 @@ const ScorecardView = ({ examId, onBack }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch attempt ID for this exam
-    api.get(`/exams/${examId}`)
-      .then(async () => {
-        // Find attempt for this student
-        const res = await api.get('/exams');
-        const currentExam = res.data.exams?.find((e) => e.id === parseInt(examId, 10));
-
-        // Attempt ID lookup
-        const attemptRes = await api.get(`/eval/exams/${examId}/submissions`);
-        // If student, this call fails with 403, so let's use direct scorecard endpoint!
-      })
-      .catch(() => {});
-
-    // Directly query scorecard by attempt or exam
-    // In our seed, Exam 2 has attempt #1 for student 1
-    api.get(`/eval/attempts/1/scorecard`)
+    // Server resolves the logged-in candidate's own attempt for this exam (OEP-SR-005)
+    api.get(`/eval/exams/${examId}/my-scorecard`)
       .then((res) => {
         setData(res.data);
         setLoading(false);
@@ -91,6 +77,18 @@ const ScorecardView = ({ examId, onBack }) => {
         </div>
       </div>
 
+      {!attempt.is_graded && (
+        <div className="card" style={{ marginBottom: '1rem', borderLeft: '4px solid var(--accent-amber)', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          <strong style={{ color: 'var(--accent-amber)' }}>Provisional Result:</strong> Some subjective answers are still awaiting instructor review, so your score may change.
+        </div>
+      )}
+
+      {!attempt.solutions_released && (
+        <div className="card" style={{ marginBottom: '1rem', borderLeft: '4px solid var(--accent-primary)', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          Answer keys and explanations will be released once grading is complete and the exam window has closed.
+        </div>
+      )}
+
       {/* Itemized Questions Breakdown */}
       <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem' }}>
         Detailed Item Analysis & Solutions (OEP-F-015)
@@ -98,7 +96,7 @@ const ScorecardView = ({ examId, onBack }) => {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {breakdown.map((item, index) => {
-          const isCorrect = item.marks_awarded > 0;
+          const isCorrect = item.marks_awarded >= item.max_marks;
 
           return (
             <div key={item.question_id} className="card" style={{ borderLeft: `4px solid ${isCorrect ? 'var(--accent-emerald)' : 'var(--accent-rose)'}` }}>
@@ -125,7 +123,7 @@ const ScorecardView = ({ examId, onBack }) => {
                   </strong>
                 </div>
 
-                {!isCorrect && (
+                {!isCorrect && item.correct_answer && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)' }}>
                     <HelpCircle size={16} color="var(--accent-primary)" />
                     <span>Correct Answer Key:</span>
