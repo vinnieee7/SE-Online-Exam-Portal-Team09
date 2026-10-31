@@ -73,19 +73,49 @@ exports.getExamSubmissions = async (req, res) => {
 exports.gradeManual = async (req, res) => {
   try {
     const { attemptId } = req.params;
-    const { grades = [] } = req.body; // Array: [{ answer_id, marks_awarded, feedback }]
+    const { grades } = req.body; // Array: [{ answer_id, marks_awarded, feedback }]
+
+    if (!Array.isArray(grades) || grades.length === 0) {
+      return res.status(400).json({ error: 'Grades payload must be a non-empty array' });
+    }
 
     const attempt = await get('SELECT * FROM attempts WHERE id = ?', [attemptId]);
     if (!attempt) {
       return res.status(404).json({ error: 'Attempt not found' });
     }
 
+    if (attempt.status === 'in_progress') {
+      return res.status(400).json({ error: 'Cannot grade an attempt that has not been submitted yet' });
+    }
+
+    // Validate every grade before writing any, so a bad entry cannot leave a half-graded attempt
+    const answerRows = await all(
+      `SELECT a.id, q.marks as max_marks
+       FROM answers a
+       JOIN questions q ON a.question_id = q.id
+       WHERE a.attempt_id = ?`,
+      [attemptId]
+    );
+    const maxMarksByAnswer = new Map(answerRows.map((row) => [row.id, row.max_marks]));
+
+    for (const g of grades) {
+      const maxMarks = maxMarksByAnswer.get(Number(g.answer_id));
+      if (maxMarks === undefined) {
+        return res.status(400).json({ error: `Answer #${g.answer_id} does not belong to attempt #${attemptId}` });
+      }
+
+      const marks = g.marks_awarded === null || g.marks_awarded === '' ? NaN : Number(g.marks_awarded);
+      if (!Number.isFinite(marks) || marks < 0 || marks > maxMarks) {
+        return res.status(400).json({ error: `Marks for answer #${g.answer_id} must be a number between 0 and ${maxMarks}` });
+      }
+    }
+
     for (const g of grades) {
       await run(
-        `UPDATE answers 
-         SET marks_awarded = ?, instructor_feedback = ?, updated_at = CURRENT_TIMESTAMP 
+        `UPDATE answers
+         SET marks_awarded = ?, instructor_feedback = ?, updated_at = CURRENT_TIMESTAMP
          WHERE id = ? AND attempt_id = ?`,
-        [g.marks_awarded || 0, g.feedback || '', g.answer_id, attemptId]
+        [Number(g.marks_awarded), g.feedback || '', g.answer_id, attemptId]
       );
     }
 
@@ -97,43 +127,115 @@ exports.gradeManual = async (req, res) => {
 
     const finalScore = totalRow?.final_score || 0;
 
+    // Short answers the instructor has not reviewed yet still have no feedback recorded
+    const pendingRow = await get(
+      `SELECT COUNT(*) as pending_count
+       FROM answers a
+       JOIN questions q ON a.question_id = q.id
+       WHERE a.attempt_id = ? AND q.question_type = 'ShortAnswer' AND a.instructor_feedback IS NULL`,
+      [attemptId]
+    );
+    const pendingCount = pendingRow?.pending_count || 0;
+    const isFullyGraded = pendingCount === 0 ? 1 : 0;
+
     await run(
-      'UPDATE attempts SET score = ?, is_graded = 1, status = ? WHERE id = ?',
-      [finalScore, 'graded', attemptId]
+      'UPDATE attempts SET score = ?, is_graded = ?, status = ? WHERE id = ?',
+      [finalScore, isFullyGraded, isFullyGraded ? 'graded' : 'submitted', attemptId]
     );
 
     await logAuditAction(req.user.id, 'MANUAL_GRADE', `Instructor graded attempt #${attemptId}. Final score: ${finalScore}`, req);
 
     res.json({
-      message: 'Grading updated and finalized',
-      finalScore
+      message: isFullyGraded
+        ? 'Grading updated and finalized'
+        : `Grades saved; ${pendingCount} subjective answer(s) still pending review`,
+      finalScore,
+      isFullyGraded: isFullyGraded === 1,
+      pendingCount
     });
   } catch (err) {
     res.status(500).json({ error: 'Manual grading failed', details: err.message });
   }
 };
 
+const SCORECARD_ATTEMPT_QUERY = `SELECT a.*, e.title as exam_title, e.total_marks, e.is_published, e.end_time as exam_end_time,
+          u.name as student_name, u.email as student_email
+   FROM attempts a
+   JOIN exams e ON a.exam_id = e.id
+   JOIN users u ON a.student_id = u.id`;
+
+// Builds and sends the scorecard for an attempt the caller is already authorized to view
+async function sendScorecard(req, res, attempt) {
+  const isStaff = req.user.role === 'Instructor' || req.user.role === 'Admin';
+
+  // Candidates only see results once the attempt has been submitted
+  if (!isStaff && attempt.status === 'in_progress') {
+    return res.status(403).json({ error: 'Scorecard is available only after the exam attempt has been submitted.' });
+  }
+
+  // Answer keys and explanations are released to candidates only when grading is complete
+  // and the exam window has closed, so they cannot be passed to classmates still taking the exam
+  const examWindowClosed = new Date(attempt.exam_end_time) <= new Date();
+  const solutionsReleased = isStaff || (attempt.is_graded === 1 && examWindowClosed);
+
+  // Fetch detailed breakdown
+  const breakdown = await all(
+    `SELECT a.id as answer_id, a.selected_option, a.short_answer_text, a.marks_awarded, a.instructor_feedback,
+            q.id as question_id, q.question_text, q.question_type, q.marks as max_marks,
+            q.correct_answer, q.explanation
+     FROM answers a
+     JOIN questions q ON a.question_id = q.id
+     WHERE a.attempt_id = ?
+     ORDER BY q.id ASC`,
+    [attempt.id]
+  );
+
+  for (const item of breakdown) {
+    if (!solutionsReleased) {
+      item.correct_answer = null;
+      item.explanation = null;
+    }
+
+    // Attach options for MCQs
+    item.options = await all(
+      'SELECT option_key, option_text FROM options WHERE question_id = ? ORDER BY option_key ASC',
+      [item.question_id]
+    );
+  }
+
+  res.json({
+    attempt: {
+      id: attempt.id,
+      exam_title: attempt.exam_title,
+      total_marks: attempt.total_marks,
+      student_name: attempt.student_name,
+      score: attempt.score,
+      percentage: attempt.total_marks > 0 ? ((attempt.score / attempt.total_marks) * 100).toFixed(1) : 0,
+      is_graded: attempt.is_graded,
+      status: attempt.status,
+      submit_time: attempt.submit_time,
+      solutions_released: solutionsReleased
+    },
+    breakdown
+  });
+}
+
 // Student Scorecard with Result Privacy Enforcement (OEP-F-015, OEP-SR-005, TC-Eval-03, TC-Sec-06)
 exports.getScorecard = async (req, res) => {
   try {
     const { attemptId } = req.params;
 
-    const attempt = await get(
-      `SELECT a.*, e.title as exam_title, e.total_marks, e.is_published, u.name as student_name, u.email as student_email
-       FROM attempts a
-       JOIN exams e ON a.exam_id = e.id
-       JOIN users u ON a.student_id = u.id
-       WHERE a.id = ?`,
-      [attemptId]
-    );
+    const attempt = await get(`${SCORECARD_ATTEMPT_QUERY} WHERE a.id = ?`, [attemptId]);
 
     if (!attempt) {
       return res.status(404).json({ error: 'Scorecard not found' });
     }
 
     // RESULT ISOLATION ENFORCEMENT (OEP-SR-005 / TC-Sec-06)
-    // A student can ONLY view their own scorecard!
-    if (req.user.role === 'Student' && attempt.student_id !== req.user.id) {
+    // Only Instructors and Admins may view other candidates' scorecards; every other role
+    // is restricted to its own attempts (fails closed for any unexpected role)
+    const isStaff = req.user.role === 'Instructor' || req.user.role === 'Admin';
+    if (!isStaff && Number(attempt.student_id) !== Number(req.user.id)) {
       await logAuditAction(
         req.user.id,
         'SECURITY_VIOLATION_SCORECARD',
@@ -145,40 +247,27 @@ exports.getScorecard = async (req, res) => {
       });
     }
 
-    // Fetch detailed breakdown
-    const breakdown = await all(
-      `SELECT a.id as answer_id, a.selected_option, a.short_answer_text, a.marks_awarded, a.instructor_feedback,
-              q.id as question_id, q.question_text, q.question_type, q.marks as max_marks, 
-              q.correct_answer, q.explanation
-       FROM answers a
-       JOIN questions q ON a.question_id = q.id
-       WHERE a.attempt_id = ?
-       ORDER BY q.id ASC`,
-      [attemptId]
-    );
+    await sendScorecard(req, res, attempt);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch scorecard', details: err.message });
+  }
+};
 
-    // Attach options for MCQs
-    for (const item of breakdown) {
-      item.options = await all(
-        'SELECT option_key, option_text FROM options WHERE question_id = ? ORDER BY option_key ASC',
-        [item.question_id]
-      );
+// Student: Scorecard for the logged-in candidate's own attempt on an exam (OEP-F-015, OEP-SR-005)
+exports.getMyScorecard = async (req, res) => {
+  try {
+    const { examId } = req.params;
+
+    const attempt = await get(`${SCORECARD_ATTEMPT_QUERY} WHERE a.exam_id = ? AND a.student_id = ?`, [
+      examId,
+      req.user.id
+    ]);
+
+    if (!attempt) {
+      return res.status(404).json({ error: 'No attempt found for this exam.' });
     }
 
-    res.json({
-      attempt: {
-        id: attempt.id,
-        exam_title: attempt.exam_title,
-        total_marks: attempt.total_marks,
-        student_name: attempt.student_name,
-        score: attempt.score,
-        percentage: attempt.total_marks > 0 ? ((attempt.score / attempt.total_marks) * 100).toFixed(1) : 0,
-        is_graded: attempt.is_graded,
-        status: attempt.status,
-        submit_time: attempt.submit_time
-      },
-      breakdown
-    });
+    await sendScorecard(req, res, attempt);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch scorecard', details: err.message });
   }
@@ -195,7 +284,7 @@ exports.getExamAnalytics = async (req, res) => {
     }
 
     const attempts = await all(
-      'SELECT id, score, is_graded, status FROM attempts WHERE exam_id = ? AND status IN ("submitted", "graded")',
+      "SELECT id, score, is_graded, status FROM attempts WHERE exam_id = ? AND status IN ('submitted', 'graded')",
       [examId]
     );
 
@@ -204,6 +293,7 @@ exports.getExamAnalytics = async (req, res) => {
         examTitle: exam.title,
         totalAttempts: 0,
         averageScore: 0,
+        medianScore: 0,
         highestScore: 0,
         lowestScore: 0,
         passPercentage: 0,
@@ -217,12 +307,18 @@ exports.getExamAnalytics = async (req, res) => {
     const highestScore = Math.max(...scores);
     const lowestScore = Math.min(...scores);
 
+    const sortedScores = [...scores].sort((a, b) => a - b);
+    const mid = Math.floor(sortedScores.length / 2);
+    const medianScore =
+      sortedScores.length % 2 === 0 ? (sortedScores[mid - 1] + sortedScores[mid]) / 2 : sortedScores[mid];
+
     // Pass cutoff = 40% of total marks
     const passCutoff = exam.total_marks * 0.4;
     const passedCount = scores.filter((s) => s >= passCutoff).length;
     const passPercentage = ((passedCount / attempts.length) * 100).toFixed(1);
 
-    // Item Analysis: % correct for each question in this exam
+    // Item Analysis: % correct and difficulty index (p-value) for each question in this exam.
+    // Unanswered questions count as incorrect, so rates are taken over all completed attempts.
     const examQuestions = await all(
       `SELECT q.id, q.question_text, q.question_type, q.marks, q.correct_answer
        FROM exam_questions eq
@@ -238,13 +334,21 @@ exports.getExamAnalytics = async (req, res) => {
         `SELECT a.selected_option, a.marks_awarded 
          FROM answers a
          JOIN attempts att ON a.attempt_id = att.id
-         WHERE att.exam_id = ? AND a.question_id = ?`,
+         WHERE att.exam_id = ? AND a.question_id = ? AND att.status IN ('submitted', 'graded')`,
         [examId, q.id]
       );
 
       const totalResponses = answersForQ.length;
-      const correctResponses = answersForQ.filter((a) => a.marks_awarded > 0).length;
-      const accuracyRate = totalResponses > 0 ? ((correctResponses / totalResponses) * 100).toFixed(1) : 0;
+      // A response is correct only when it earned full marks (partial subjective credit is not "correct")
+      const correctResponses = answersForQ.filter((a) => a.marks_awarded >= q.marks).length;
+      const accuracyRate = ((correctResponses / attempts.length) * 100).toFixed(1);
+
+      // Difficulty index p = average fraction of marks earned (0 = nobody scored, 1 = everyone full marks)
+      const marksEarned = answersForQ.reduce((acc, a) => acc + (a.marks_awarded || 0), 0);
+      const difficultyIndex = q.marks > 0 ? marksEarned / (q.marks * attempts.length) : 0;
+      let difficultyLabel = 'Hard';
+      if (difficultyIndex >= 0.7) difficultyLabel = 'Easy';
+      else if (difficultyIndex >= 0.3) difficultyLabel = 'Moderate';
 
       itemAnalysis.push({
         questionId: q.id,
@@ -253,7 +357,9 @@ exports.getExamAnalytics = async (req, res) => {
         maxMarks: q.marks,
         totalResponses,
         correctResponses,
-        accuracyRate: parseFloat(accuracyRate)
+        accuracyRate: parseFloat(accuracyRate),
+        difficultyIndex: parseFloat(difficultyIndex.toFixed(2)),
+        difficultyLabel
       });
     }
 
@@ -261,6 +367,7 @@ exports.getExamAnalytics = async (req, res) => {
       examTitle: exam.title,
       totalAttempts: attempts.length,
       averageScore: parseFloat(averageScore),
+      medianScore,
       highestScore,
       lowestScore,
       passPercentage: parseFloat(passPercentage),
@@ -276,5 +383,6 @@ module.exports = {
   getExamSubmissions: exports.getExamSubmissions,
   gradeManual: exports.gradeManual,
   getScorecard: exports.getScorecard,
+  getMyScorecard: exports.getMyScorecard,
   getExamAnalytics: exports.getExamAnalytics
 };

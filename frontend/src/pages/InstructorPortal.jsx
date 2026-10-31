@@ -159,12 +159,12 @@ const InstructorPortal = () => {
           feedback: manualFeedback[b.answer_id] || b.instructor_feedback || ''
         }));
 
-      await api.post(`/eval/attempts/${gradingAttempt.id}/grade`, { grades: gradesPayload });
-      alert('Subjective question evaluation finalized!');
+      const res = await api.post(`/eval/attempts/${gradingAttempt.id}/grade`, { grades: gradesPayload });
+      alert(res.data.message || 'Subjective question evaluation finalized!');
       setGradingAttempt(null);
       fetchSubmissions(selectedExamId);
     } catch (err) {
-      alert('Failed to submit grades');
+      alert(err.response?.data?.error || 'Failed to submit grades');
     }
   };
 
@@ -363,13 +363,14 @@ const InstructorPortal = () => {
                       <td style={{ fontWeight: 700, fontSize: '1rem' }}>{sub.score} Marks</td>
                       <td>
                         <span className={`badge ${sub.is_graded ? 'badge-student' : 'badge-admin'}`}>
-                          {sub.is_graded ? 'Graded' : 'Pending Review'}
+                          {sub.status === 'in_progress' ? 'In Progress' : sub.is_graded ? 'Graded' : 'Pending Review'}
                         </span>
                       </td>
                       <td>
                         <button
                           onClick={() => openManualGrading(sub)}
                           className="btn btn-primary btn-sm"
+                          disabled={sub.status === 'in_progress'}
                         >
                           Evaluate / Grade
                         </button>
@@ -414,6 +415,9 @@ const InstructorPortal = () => {
                   <div style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--accent-primary)', marginTop: '0.25rem' }}>
                     {analyticsData.averageScore} Marks
                   </div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                    Median: {analyticsData.medianScore} Marks
+                  </div>
                 </div>
                 <div className="card" style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Passing Percentage</div>
@@ -441,10 +445,10 @@ const InstructorPortal = () => {
                         <th>QID</th>
                         <th>Question</th>
                         <th>Type</th>
-                        <th>Total Attempts</th>
+                        <th>Responses</th>
                         <th>Correct Responses</th>
                         <th>Accuracy Rate</th>
-                        <th>Difficulty Rating</th>
+                        <th>Difficulty Index (p)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -464,8 +468,8 @@ const InstructorPortal = () => {
                             </div>
                           </td>
                           <td>
-                            <span className={`badge ${item.accuracyRate >= 60 ? 'badge-student' : 'badge-admin'}`}>
-                              {item.accuracyRate >= 60 ? 'Easy / Moderate' : 'Challenging'}
+                            <span className={`badge ${item.difficultyLabel === 'Hard' ? 'badge-admin' : 'badge-student'}`}>
+                              {item.difficultyIndex} ({item.difficultyLabel})
                             </span>
                           </td>
                         </tr>

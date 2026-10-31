@@ -8,6 +8,9 @@ router.use(authenticateToken);
 // Student view own scorecard (or Admin/Instructor view)
 router.get('/attempts/:attemptId/scorecard', evalController.getScorecard);
 
+// Student view own scorecard for an exam (looks up the logged-in candidate's attempt)
+router.get('/exams/:examId/my-scorecard', requireRole('Student'), evalController.getMyScorecard);
+
 // Instructor view submissions for an exam
 router.get('/exams/:examId/submissions', requireRole('Instructor', 'Admin'), evalController.getExamSubmissions);
 
