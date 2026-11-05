@@ -1,9 +1,12 @@
 # Completed Requirements Traceability Matrix (RTM)
-**Project:** Online Exam Portal (OEP)  
-**Team Number:** 9 | **Section:** A  
-**QA Lead:** Aadish Sarin (`PES2UG24CS007`)  
-**Status Codes:** `A` = Accepted (Verified & Passed), `P` = Partial, `N` = Not Started  
-**Overall Coverage:** 26 / 26 Requirements (100% Accepted)
+
+> **Course:** Software Engineering | **Section:** A | **Team Number:** 9  
+> **System Name:** Online Exam Portal (OEP)  
+> **QA Lead:** Aadish Sarin (`PES2UG24CS007`)  
+> **Dev Lead:** A S Vincent (`PES2UG24CS002`, `@vinnieee7`)  
+> **Status Codes:** `A` = Accepted (Verified & Passed), `P` = Partial, `N` = Not Started  
+> **Overall Coverage:** 26 / 26 Requirements (100% Accepted)  
+> **Related Reports:** [Test Execution Report](../TEST_EXECUTION_REPORT.md) | [Deviations Report](../DEVIATIONS_FROM_BASELINE.md) | [Defect Log](defect-log.md) | [Test Evidence](evidence/test-execution-evidence.md)
 
 ---
 
@@ -39,5 +42,5 @@
 ---
 
 ### Sign-Off & Verification
-- **Aadish Sarin (QA Lead):** *Approved — 100% Requirement Coverage Verified*
-- **A S Vincent (Dev Lead):** *Approved — Build Candidate Ready for Release*
+- **Aadish Sarin (QA Lead):** *Approved — 100% Requirement Coverage Verified (Sprint 2 Freeze)*
+- **A S Vincent (Dev Lead):** *Approved — Build Candidate Accepted for Release*

@@ -22,15 +22,15 @@ The Product Backlog encompasses all functional requirements (FR), non-functional
 
 ---
 
-## 2. Team Work Allocation Summary
+## 2. Team Work Allocation Summary (Balanced Distribution)
 
-| Member Name | SRN | Primary Module / Responsibility | Sprint 1 SP | Sprint 2 SP | Total SP |
-| :--- | :--- | :--- | :---: | :---: | :---: |
-| **A S Vincent** | `PES2UG24CS002` | **Dev Lead:** Module M1 (Auth & RBAC), Security Lead, UI Shell, Audit, Cross-Tester M4 | 18 | 12 | **30 SP** |
-| **Aadish Sarin** | `PES2UG24CS007` | **Team & QA Lead:** Module M2 (Exam & Question Bank CRUD), RTM, Cross-Tester M1 | 19 | 2 | **21 SP** |
-| **Aditya Rao** | `PES2UG24CS034` | **DevOps Lead:** Module M3 (Exam Delivery & Timer), DB Schema/Seed, Cross-Tester M2 | 9 | 14 | **23 SP** |
-| **Akshansh Agrawal** | `PES2UG24CS045` | **Performance & UX Lead:** Module M4 (Auto-Grading & Analytics), Cross-Tester M3 | 1 | 16 | **17 SP** |
-| **Team Total** | — | — | **47 SP** | **44 SP** | **91 SP** |
+| Member Name | SRN | Primary Module / Responsibility | Issues Assigned | Sprint 1 SP | Sprint 2 SP | Total SP |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: |
+| **A S Vincent** | `PES2UG24CS002` | **Dev Lead & Facilitator:** Module M1 (Auth & RBAC), Security Audit Trail, Cross-Testing M4 | **7 Issues** (#1, #3, #4, #5, #6, #13, #24) | 18 | 7 | **25 SP** |
+| **Aadish Sarin** | `PES2UG24CS007` | **Team & QA Lead:** Module M2 (Exam Lifecycle, Question Bank), Integration Test Suite, RTM | **7 Issues** (#7, #8, #9, #10, #14, #26, #27) | 19 | 3 | **22 SP** |
+| **Aditya Rao** | `PES2UG24CS034` | **DevOps Lead:** Module M3 (Delivery Engine, Timer, Auto-save), Database Schema & Seed | **7 Issues** (#2, #11, #12, #15, #16, #17, #18) | 9 | 12 | **21 SP** |
+| **Akshansh Agrawal** | `PES2UG24CS045` | **Performance & UX Lead:** Module M4 (Auto-Grading, Analytics), Role Dashboards & Dark Theme | **6 Issues** (#19, #20, #21, #22, #23, #25) | 2 | 21 | **23 SP** |
+| **Team Total** | — | — | **27 Issues** | **47 SP** | **44 SP** | **91 SP** |
 
 ---
 
@@ -347,9 +347,9 @@ The Product Backlog encompasses all functional requirements (FR), non-functional
 
 ### Issue #23: Role-Based Dashboards, Navigation & Dark Mode Design System
 - **Issue ID:** `OEP-UI-01` | **GitHub Issue:** `#23`
-- **Assigned To:** A S Vincent (`PES2UG24CS002`, `@vinnieee7`)
+- **Assigned To:** Akshansh Agrawal (`PES2UG24CS045`, `@akshagra`)
 - **Story Points:** 5 SP | **Priority:** High | **Milestone:** Sprint 2
-- **Labels:** `enhancement`, `frontend`, `ux`, `vincent-PES2UG24CS002`
+- **Labels:** `enhancement`, `frontend`, `ux`, `akshansh-PES2UG24CS045`
 - **Requirement Ref:** `DS-UX-01`, `OEP-NF-005` | **Test Case:** `TC-UX-01`
 - **User Story:**
   > *As an authenticated user, I want a cohesive role-aware navigation bar, streamlined portal switching, and WCAG 2.1 AA compliant dark theme, so that I have an accessible, professional user experience.*
@@ -393,21 +393,21 @@ The Product Backlog encompasses all functional requirements (FR), non-functional
 
 ### Issue #26: [BUG] Audit Log Socket Address Crash in Automated Test Environment
 - **Issue ID:** `DEF-006` | **GitHub Issue:** `#26`
-- **Assigned To:** Aditya Rao (`PES2UG24CS034`) | **Reporter:** A S Vincent (`PES2UG24CS002`)
+- **Assigned To:** Aadish Sarin (`PES2UG24CS007`, `@aadishs-364`) | **Reporter:** A S Vincent (`PES2UG24CS002`)
 - **Story Points:** 1 SP | **Priority:** Medium | **Milestone:** Sprint 2
-- **Labels:** `bug`, `backend`, `sprint-2`, `aditya-PES2UG24CS034`
+- **Labels:** `bug`, `backend`, `sprint-2`, `aadish-PES2UG24CS007`
 - **Requirement Ref:** `OEP-NF-004` | **Test Case:** `TC-Sec-04`
 - **Description:** Supertest mock requests threw `TypeError: Cannot read properties of undefined (reading 'remoteAddress')`.
 - **Resolution:** Added safe fallback `(req && req.socket && req.socket.remoteAddress) || req.ip || '127.0.0.1'`.
-- **Resolution Status:** Assigned to Aditya Rao (Commit `c7c09e8`). Verified by A S Vincent (`TC-Sec-04`).
+- **Resolution Status:** Assigned to Aadish Sarin (Commit `c7c09e8`). Verified by A S Vincent (`TC-Sec-04`).
 
 ---
 
 ### Issue #27: Comprehensive Automated Integration Test Suite & Cross-Testing Sign-Off
 - **Issue ID:** `OEP-QA-01` | **GitHub Issue:** `#27`
-- **Assigned To:** A S Vincent (`PES2UG24CS002`, `@vinnieee7`) & Aadish Sarin (`PES2UG24CS007`)
+- **Assigned To:** Aadish Sarin (`PES2UG24CS007`, `@aadishs-364`) & A S Vincent (`PES2UG24CS002`)
 - **Story Points:** 2 SP | **Priority:** High | **Milestone:** Sprint 2
-- **Labels:** `testing`, `backend`, `vincent-PES2UG24CS002`
+- **Labels:** `testing`, `backend`, `aadish-PES2UG24CS007`
 - **Requirement Ref:** STP §1–§9, Cross-Testing Mandate | **Test Case:** All 19 Test Cases
 - **User Story:**
   > *As Dev Lead and QA Lead, we want an automated integration test suite validating all 4 modules and security controls with 100% pass rate, so that software release exit criteria are verified before development freeze.*

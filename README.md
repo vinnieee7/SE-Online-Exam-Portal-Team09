@@ -113,8 +113,12 @@ All accounts share the default test password: `Password@123`
 - **Sprint 2 Execution Report:** [SPRINT_2_REPORT.md](SPRINT_2_REPORT.md)
 - **Sprint Retrospective:** [SPRINT_RETROSPECTIVE.md](SPRINT_RETROSPECTIVE.md)
 - **Development Progress & History:** [DEVELOPMENT_PROGRESS.md](DEVELOPMENT_PROGRESS.md)
+- **Deviations from Baseline (SAD/SRS):** [DEVIATIONS_FROM_BASELINE.md](docs/DEVIATIONS_FROM_BASELINE.md)
+- **2-Minute Demonstration Video:** [DEMO_VIDEO.md](docs/DEMO_VIDEO.md)
+- **Software Test Execution Report (STP §8–§14):** [TEST_EXECUTION_REPORT.md](docs/TEST_EXECUTION_REPORT.md)
 - **Completed Requirements Traceability Matrix:** [Completed_RTM.md](docs/deliverable-4/Completed_RTM.md)
 - **Defect Tracking Log:** [defect-log.md](docs/deliverable-4/defect-log.md)
+- **Automated Test Log Evidence:** [test-execution-evidence.md](docs/deliverable-4/evidence/test-execution-evidence.md)
 
 ---
 

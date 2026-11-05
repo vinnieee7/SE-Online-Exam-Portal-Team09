@@ -6,6 +6,8 @@ node_modules/
 # Production build artifacts
 dist/
 build/
+coverage/
+scratch/
 
 # Local Environment & Database
 .env

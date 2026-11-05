@@ -28,58 +28,56 @@
 | Issue ID | Req ID | Title | Assignee | Est. SP | Outcome / Commit |
 | :---: | :---: | :--- | :--- | :---: | :--- |
 | **#15** | `OEP-F-009` | Candidate Assessment Discovery & Start | Aditya Rao (`034`) | 3 | **Completed** (`c7c09e8`) |
-| **#16** | `OEP-F-010` | Server-Enforced Countdown Timer Engine | Aditya Rao (`034`) | 5 | **Completed** (`c7c09e8`) |
-| **#17** | `OEP-F-011` | 30s Periodic Auto-Save & Auto-Submit | Aditya Rao (`034`) | 5 | **Completed** (`c7c09e8`) |
+| **#16** | `OEP-F-010` | Server-Enforced Countdown Timer Engine | Aditya Rao (`034`) | 3 | **Completed** (`c7c09e8`) |
+| **#17** | `OEP-F-011` | 30s Periodic Auto-Save & Auto-Submit | Aditya Rao (`034`) | 3 | **Completed** (`c7c09e8`) |
 | **#18** | `OEP-F-012` | Question Palette & Review Flagging | Aditya Rao (`034`) | 3 | **Completed** (`c7c09e8`) |
 | **#19** | `OEP-F-013` | Instant Auto-Grading for Objective Questions| Akshansh Agrawal (`045`)| 5 | **Completed** (`72c9961`) |
 | **#20** | `OEP-F-014` | Instructor Manual Subjective Grading Portal | Akshansh Agrawal (`045`)| 5 | **Completed** (`72c9961`) |
 | **#21** | `OEP-F-015` | Private Candidate Scorecard Display | Akshansh Agrawal (`045`)| 3 | **Completed** (`72c9961`) |
-| **#22** | `OEP-F-016` | Class Performance & Difficulty Analytics | Akshansh Agrawal (`045`)| 5 | **Completed** (`72c9961`) |
-| **#23** | `OEP-UI-01` | Role Dashboards & Dark Mode Design System | A S Vincent (`@vinnieee7`) | 5 | **Completed** (`75b5278`) |
+| **#22** | `OEP-F-016` | Class Performance & Difficulty Analytics | Akshansh Agrawal (`045`)| 3 | **Completed** (`72c9961`) |
+| **#23** | `OEP-UI-01` | Role Dashboards & Dark Mode Design System | Akshansh Agrawal (`045`) | 5 | **Completed** (`75b5278`) |
 | **#24** | `OEP-SEC-01`| Security Audit Logging & IDOR Safeguards | A S Vincent (`@vinnieee7`) | 5 | **Completed** (`75b5278`) |
 | **#25** | `DEF-005` | [BUG] Student Scorecard Privacy Leak (IDOR)| Akshansh Agrawal (`045`)| 2 | **Resolved** (`72c9961`) |
-| **#26** | `DEF-006` | [BUG] Audit Log Socket Address Fallback | Aditya Rao (`034`) | 1 | **Resolved** (`c7c09e8`) |
-| **#27** | `OEP-QA-01` | Comprehensive Test Suite & Cross-Testing | A S Vincent & Aadish | 2 | **Completed** (`e6fc782`) |
+| **#26** | `DEF-006` | [BUG] Audit Log Socket Address Fallback | Aadish Sarin (`007`) | 1 | **Resolved** (`c7c09e8`) |
+| **#27** | `OEP-QA-01` | Comprehensive Test Suite & Cross-Testing | Aadish Sarin (`007`) | 2 | **Completed** (`e6fc782`) |
 
 ---
 
-## 3. Team Member Work Breakdown (Sprint 2)
+## 3. Team Member Work Breakdown (Sprint 2 Balanced Allocation)
 
-### A S Vincent (`PES2UG24CS002`, `@vinnieee7`) — 12 SP Delivered
-1. **Role Dashboards & UI Shell (`#23`):**
-   - Engineered the unified role-based navigation bar (`Navbar.jsx`) dynamically toggling features for Student, Instructor, and Admin personas.
-   - Built the system-wide Dark Mode design system (`index.css`, `App.css`) fulfilling WCAG 2.1 AA 4.5:1 contrast standards.
-   - Built the Administrator Management Portal (`AdminPortal.jsx`) enabling account locking, unlocking, and live security audit log inspection.
-2. **Security Controls & Audit Logging (`#24`):**
+### A S Vincent (`PES2UG24CS002`, `@vinnieee7`) — 7 SP Delivered (25 SP Cumulative)
+1. **Security Controls & Audit Logging (`#24`):**
    - Created persistent audit logging middleware (`backend/src/middleware/logger.js`) recording actor, event, timestamp, and client IP.
    - Designed and mounted `/api/audit-logs` endpoint with RBAC restricting access to Administrators.
    - Formulated strict IDOR defenses preventing cross-student scorecard inspection.
-3. **Automated Test Suite & Cross-Testing Sign-off (`#27`):**
-   - Co-authored comprehensive integration test suite (`api.test.js`) validating 19 test cases across all 4 modules.
-   - Verified Akshansh's Module M4 implementation (`TC-Eval-01` through `TC-Eval-04`).
+2. **Cross-Module Architecture & Review:**
+   - Architecture review and backend API endpoint alignment across M1, M2, M3, M4.
+   - Facilitated Sprint 2 freeze and release candidate sign-off.
 
-### Aditya Rao (`PES2UG24CS034`) — 14 SP Delivered
+### Aditya Rao (`PES2UG24CS034`) — 12 SP Delivered (21 SP Cumulative)
 1. **Exam Delivery Engine (`#15`, `#16`, `#17`, `#18`):**
    - Implemented `backend/src/controllers/deliveryController.js` and `deliveryRoutes.js`.
    - Built the test-taking client interface (`ExamScreen.jsx`) with live server-synchronized countdown timer.
    - Implemented 30-second background auto-save interval and automatic submission upon timer expiration.
    - Implemented question navigation palette with color-coded answered/flagged indicators.
-2. **Bug Remediation (`#26` / `DEF-006`):** Resolved socket address undefined error in mock Supertest requests.
 
-### Akshansh Agrawal (`PES2UG24CS045`) — 16 SP Delivered
+### Akshansh Agrawal (`PES2UG24CS045`) — 21 SP Delivered (23 SP Cumulative)
 1. **Evaluation, Scorecards & Analytics (`#19`, `#20`, `#21`, `#22`):**
    - Implemented `backend/src/controllers/evalController.js` and `evalRoutes.js`.
    - Developed auto-grading engine for MCQ and True/False responses.
    - Built Instructor Grading Portal (`InstructorPortal.jsx`) allowing subjective question evaluation, partial marks awarding, and written feedback.
    - Built candidate Scorecard view (`ScorecardView.jsx`) with score breakdown and solution explanations.
    - Built class aggregate analytics reporting average score, pass rate, and item difficulty index.
-2. **Bug Remediation (`#25` / `DEF-005`):** Fixed critical IDOR vulnerability on scorecard endpoint.
-3. **Cross-Testing Module M3:** Verified Aditya's delivery engine via `TC-Take-01` through `TC-Take-04`.
+2. **Role Dashboards & UI Design System (`#23`):**
+   - Implemented system-wide dark mode styling (`index.css`) conforming to WCAG 2.1 AA 4.5:1 contrast standards.
+   - Integrated responsive role dashboards across desktop and mobile viewports.
+3. **Bug Remediation (`#25` / `DEF-005`):** Fixed critical IDOR vulnerability on scorecard endpoint.
 
-### Aadish Sarin (`PES2UG24CS007`) — 2 SP Delivered
-1. **QA Lead Verification & Release Sign-Off:**
+### Aadish Sarin (`PES2UG24CS007`) — 3 SP Delivered (22 SP Cumulative)
+1. **QA Lead Verification & Release Sign-Off (`#27`):**
    - Maintained defect tracking log and updated Completed RTM to 100% coverage.
-   - Co-executed automated test suite with Vincent, confirming 0 open critical/high defects.
+   - Authored and executed comprehensive integration test suite (`api.test.js`) validating 19 test cases across all 4 modules.
+2. **Bug Remediation (`#26` / `DEF-006`):** Resolved socket address undefined error in mock Supertest requests.
 
 ---
 
