@@ -40,10 +40,11 @@
 | **#25** | `DEF-005` | [BUG] Student Scorecard Privacy Leak (IDOR)| Akshansh Agrawal (`045`)| 2 | **Resolved** (`72c9961`) |
 | **#26** | `DEF-006` | [BUG] Audit Log Socket Address Fallback | Aadish Sarin (`007`) | 1 | **Resolved** (`c7c09e8`) |
 | **#27** | `OEP-QA-01` | Comprehensive Test Suite & Cross-Testing | Aadish Sarin (`007`) | 2 | **Completed** (`e6fc782`) |
+| **#32** | `OEP-PERF-01` | 500 Concurrent Users Load & Latency Test | Akshansh Agrawal (`045`)| 3 | **Completed** (JMeter report) |
 
 ---
 
-## 3. Team Member Work Breakdown (Sprint 2 Balanced Allocation)
+## 3. Team Member Work Breakdown (Sprint 2 Balanced Allocation — 7 Issues Each)
 
 ### A S Vincent (`PES2UG24CS002`, `@vinnieee7`) — 7 SP Delivered (25 SP Cumulative)
 1. **Security Controls & Audit Logging (`#24`):**

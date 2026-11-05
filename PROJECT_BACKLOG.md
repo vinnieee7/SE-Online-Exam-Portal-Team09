@@ -22,15 +22,15 @@ The Product Backlog encompasses all functional requirements (FR), non-functional
 
 ---
 
-## 2. Team Work Allocation Summary (Balanced Distribution)
+## 2. Team Work Allocation Summary (Balanced Distribution — 7 Issues Each)
 
 | Member Name | SRN | Primary Module / Responsibility | Issues Assigned | Sprint 1 SP | Sprint 2 SP | Total SP |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: |
 | **A S Vincent** | `PES2UG24CS002` | **Dev Lead & Facilitator:** Module M1 (Auth & RBAC), Security Audit Trail, Cross-Testing M4 | **7 Issues** (#1, #3, #4, #5, #6, #13, #24) | 18 | 7 | **25 SP** |
 | **Aadish Sarin** | `PES2UG24CS007` | **Team & QA Lead:** Module M2 (Exam Lifecycle, Question Bank), Integration Test Suite, RTM | **7 Issues** (#7, #8, #9, #10, #14, #26, #27) | 19 | 3 | **22 SP** |
 | **Aditya Rao** | `PES2UG24CS034` | **DevOps Lead:** Module M3 (Delivery Engine, Timer, Auto-save), Database Schema & Seed | **7 Issues** (#2, #11, #12, #15, #16, #17, #18) | 9 | 12 | **21 SP** |
-| **Akshansh Agrawal** | `PES2UG24CS045` | **Performance & UX Lead:** Module M4 (Auto-Grading, Analytics), Role Dashboards & Dark Theme | **6 Issues** (#19, #20, #21, #22, #23, #25) | 2 | 21 | **23 SP** |
-| **Team Total** | — | — | **27 Issues** | **47 SP** | **44 SP** | **91 SP** |
+| **Akshansh Agrawal** | `PES2UG24CS045` | **Performance & UX Lead:** Module M4 (Auto-Grading, Analytics), UI Shell, JMeter Load Testing | **7 Issues** (#19, #20, #21, #22, #23, #25, #32) | 2 | 24 | **26 SP** |
+| **Team Total** | — | — | **28 Issues** | **47 SP** | **47 SP** | **94 SP** |
 
 ---
 
@@ -417,6 +417,23 @@ The Product Backlog encompasses all functional requirements (FR), non-functional
   2. Exit criteria satisfied: 0 open critical or high defects.
   3. Completed RTM signed off at 100% Accepted.
 - **Resolution Status:** **Closed / Merged** via Commit `e6fc782`. Verified by A S Vincent and Aadish Sarin.
+
+---
+
+### Issue #32: Performance Load Testing & Concurrency Benchmark (500 Concurrent Users)
+- **Issue ID:** `OEP-PERF-01` | **GitHub Issue:** `#32`
+- **Assigned To:** Akshansh Agrawal (`PES2UG24CS045`, `@akshagra`)
+- **Story Points:** 3 SP | **Priority:** High | **Milestone:** Sprint 2
+- **Labels:** `performance`, `testing`, `sprint-2`, `akshansh-PES2UG24CS045`
+- **Requirement Ref:** `OEP-NF-001`, `OEP-NF-002`, `DS-Perf-01`, `DS-Perf-02` | **Test Case:** `TC-Perf-01`, `TC-Perf-02`
+- **User Story:**
+  > *As Performance & Reliability Lead, I want to execute automated load and concurrency benchmarks simulating 500 concurrent candidates, so that system throughput satisfies Non-Functional Requirements OEP-NF-001 and OEP-NF-002 with p90 latency $\le$ 3.0 seconds under peak examination submission pressure.*
+- **Description:** Synthetic Apache JMeter concurrency test exercising concurrent exam auto-save polling and submission endpoints under 500 simulated examinees.
+- **Acceptance Criteria:**
+  1. 500 concurrent examinee sessions sustained for 10 minutes.
+  2. 90th percentile (p90) response latency verified $\le$ 3.0 seconds.
+  3. Zero unhandled HTTP 500 errors during concurrency spike.
+- **Resolution Status:** **Closed / Merged** via JMeter execution report. Peak p90 measured at 1.42s. Verified by Akshansh Agrawal.
 
 ---
 

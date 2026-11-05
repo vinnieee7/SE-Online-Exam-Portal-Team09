@@ -109,6 +109,7 @@ All accounts share the default test password: `Password@123`
 
 - **GitHub Repository:** [https://github.com/vinnieee7/SE-Online-Exam-Portal](https://github.com/vinnieee7/SE-Online-Exam-Portal)
 - **Master Product Backlog:** [PROJECT_BACKLOG.md](PROJECT_BACKLOG.md)
+- **Visual Kanban Board:** [VISUAL_KANBAN_BOARD.md](docs/VISUAL_KANBAN_BOARD.md)
 - **Sprint 1 Execution Report:** [SPRINT_1_REPORT.md](SPRINT_1_REPORT.md)
 - **Sprint 2 Execution Report:** [SPRINT_2_REPORT.md](SPRINT_2_REPORT.md)
 - **Sprint Retrospective:** [SPRINT_RETROSPECTIVE.md](SPRINT_RETROSPECTIVE.md)
