@@ -1,0 +1,65 @@
+# OWASP ZAP Automation Framework plan for the OEP API.
+# Filled in and run by security/run-zap-scan.js; {{...}} placeholders are replaced at run time.
+env:
+  contexts:
+    - name: OEP API
+      urls:
+        - "{{TARGET}}"
+      includePaths:
+        - "{{TARGET}}.*"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  # Every request carries an Administrator token so the scan reaches the protected routes
+  - type: replacer
+    parameters:
+      deleteAllRules: true
+    rules:
+      - description: OEP bearer token
+        url: ".*"
+        matchType: req_header
+        matchString: Authorization
+        matchRegex: false
+        replacementString: "Bearer {{TOKEN}}"
+        tokenProcessing: false
+
+  # Import all API routes from the OpenAPI description
+  - type: openapi
+    parameters:
+      apiFile: "{{API_FILE}}"
+      targetUrl: "{{TARGET}}"
+      context: OEP API
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+
+  # Active attacks: SQL injection, XSS, path traversal, command injection, etc.
+  - type: activeScan
+    parameters:
+      context: OEP API
+      maxRuleDurationInMins: 2
+      maxScanDurationInMins: 15
+    policyDefinition:
+      defaultStrength: medium
+      defaultThreshold: medium
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: "{{REPORT_DIR}}"
+      reportFile: zap-report.html
+      reportTitle: OEP API - OWASP ZAP scan
+  - type: report
+    parameters:
+      template: traditional-md
+      reportDir: "{{REPORT_DIR}}"
+      reportFile: zap-report.md
+      reportTitle: OEP API - OWASP ZAP scan

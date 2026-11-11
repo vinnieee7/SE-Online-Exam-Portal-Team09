@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  title: Online Exam Portal (OEP) API - Team 9
+  version: 1.0.1
+  description: >
+    REST API of the Online Exam Portal. Every route except health, register, login and password reset
+    needs "Authorization: Bearer <JWT>" from POST /api/auth/login. Used as the input for the OWASP ZAP scan
+    (security/run-zap-scan.js). Example ids point at seed data that is safe to modify (draft exam 4, question 30).
+servers:
+  - url: http://localhost:5000
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /api/health:
+    get:
+      summary: Service health check
+      security: []
+      responses:
+        '200': { description: Service is online }
+  /api/auth/register:
+    post:
+      summary: Register a Student or Instructor account (OEP-F-001)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, example: ZAP Candidate }
+                email: { type: string, example: zap.candidate@pesu.edu }
+                password: { type: string, example: Password@123 }
+                role: { type: string, example: Student }
+      responses:
+        '201': { description: Created }
+        '409': { description: Email already registered }
+  /api/auth/login:
+    post:
+      summary: Log in and receive a JWT (OEP-F-002)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, example: student2@pesu.edu }
+                password: { type: string, example: Password@123 }
+      responses:
+        '200': { description: Token issued }
+        '401': { description: Invalid credentials }
+        '403': { description: Account locked }
+  /api/auth/reset-password/request:
+    post:
+      summary: Request a 6-digit password reset OTP (OEP-F-003)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, example: student3@pesu.edu }
+      responses:
+        '200': { description: OTP generated }
+  /api/auth/reset-password/verify:
+    post:
+      summary: Confirm the OTP and set a new password (OEP-F-003)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, example: student3@pesu.edu }
+                otp: { type: string, example: '123456' }
+                newPassword: { type: string, example: Password@123 }
+      responses:
+        '200': { description: Password updated }
+        '400': { description: Invalid or expired OTP }
+  /api/auth/me:
+    get:
+      summary: Current user from the token
+      responses:
+        '200': { description: Current user }
+  /api/auth/users:
+    get:
+      summary: List users (Admin)
+      responses:
+        '200': { description: Users }
+  /api/auth/users/{id}:
+    patch:
+      summary: Change a user's role or lock state (Admin)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer, example: 6 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role: { type: string, example: Student }
+      responses:
+        '200': { description: Updated }
+  /api/exams:
+    get:
+      summary: List exams (role-aware)
+      responses:
+        '200': { description: Exams }
+    post:
+      summary: Create an exam (Instructor, Admin; OEP-F-005, OEP-F-007)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string, example: ZAP Scheduled Exam }
+                description: { type: string, example: Created during the security scan }
+                duration_minutes: { type: integer, example: 30 }
+                start_time: { type: string, format: date-time, example: '2026-12-01T09:00:00Z' }
+                end_time: { type: string, format: date-time, example: '2026-12-01T11:00:00Z' }
+                question_ids: { type: array, items: { type: integer }, example: [1, 2, 3] }
+                is_published: { type: integer, example: 0 }
+      responses:
+        '201': { description: Created }
+        '400': { description: Invalid schedule }
+  /api/exams/{id}:
+    get:
+      summary: Exam with its questions (no answer keys)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer, example: 4 } }
+      responses:
+        '200': { description: Exam }
+    put:
+      summary: Update or publish an exam (Instructor, Admin)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer, example: 4 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string, example: 'Agile & DevOps Practice Test (Draft)' }
+                is_published: { type: integer, example: 0 }
+      responses:
+        '200': { description: Updated }
+    delete:
+      summary: Delete an exam (Instructor, Admin)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer, example: 4 } }
+      responses:
+        '200': { description: Deleted }
+  /api/exams/questions:
+    get:
+      summary: Question bank with answer keys (Instructor, Admin; OEP-F-006)
+      responses:
+        '200': { description: Questions }
+    post:
+      summary: Add a question to the bank (Instructor, Admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question_text: { type: string, example: 'Which layer renders the user interface?' }
+                question_type: { type: string, example: MCQ }
+                marks: { type: integer, example: 5 }
+                correct_answer: { type: string, example: A }
+                explanation: { type: string, example: 'The presentation layer renders the UI.' }
+                options:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      option_key: { type: string }
+                      option_text: { type: string }
+                  example:
+                    - { option_key: A, option_text: Presentation layer }
+                    - { option_key: B, option_text: Data layer }
+      responses:
+        '201': { description: Created }
+  /api/exams/questions/bank:
+    get:
+      summary: Question bank (alias)
+      responses:
+        '200': { description: Questions }
+  /api/exams/questions/{id}:
+    delete:
+      summary: Delete a bank question (Instructor, Admin)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer, example: 30 } }
+      responses:
+        '200': { description: Deleted }
+  /api/delivery/exams/{examId}/attempt:
+    get:
+      summary: Start or resume an attempt (Student, Admin; OEP-F-009, OEP-F-010)
+      parameters:
+        - { name: examId, in: path, required: true, schema: { type: integer, example: 1 } }
+      responses:
+        '200': { description: Attempt with questions and remaining_seconds }
+  /api/delivery/attempts/{attemptId}/answers:
+    post:
+      summary: Auto-save answers (OEP-F-011)
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: integer, example: 2 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      question_id: { type: integer }
+                      selected_option: { type: string }
+                      short_answer_text: { type: string }
+                  example:
+                    - { question_id: 11, selected_option: B }
+      responses:
+        '200': { description: Saved }
+  /api/delivery/attempts/{attemptId}/submit:
+    post:
+      summary: Submit an attempt and auto-grade it (OEP-F-011, OEP-F-013)
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: integer, example: 2 } }
+      responses:
+        '200': { description: Submitted }
+  /api/eval/attempts/{attemptId}/scorecard:
+    get:
+      summary: Scorecard by attempt (owner or staff; OEP-F-015, OEP-SR-005)
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: integer, example: 1 } }
+      responses:
+        '200': { description: Scorecard }
+        '403': { description: Another candidate's attempt }
+  /api/eval/exams/{examId}/my-scorecard:
+    get:
+      summary: Own scorecard for an exam (Student)
+      parameters:
+        - { name: examId, in: path, required: true, schema: { type: integer, example: 2 } }
+      responses:
+        '200': { description: Scorecard }
+  /api/eval/exams/{examId}/submissions:
+    get:
+      summary: All attempts for an exam (Instructor, Admin)
+      parameters:
+        - { name: examId, in: path, required: true, schema: { type: integer, example: 2 } }
+      responses:
+        '200': { description: Submissions }
+  /api/eval/attempts/{attemptId}/grade:
+    post:
+      summary: Manual grading (Instructor, Admin; OEP-F-014)
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: integer, example: 1 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                grades:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      answer_id: { type: integer }
+                      marks_awarded: { type: number }
+                      feedback: { type: string }
+                  example:
+                    - { answer_id: 1, marks_awarded: 5, feedback: Correct }
+      responses:
+        '200': { description: Graded }
+  /api/eval/exams/{examId}/analytics:
+    get:
+      summary: Class analytics and item difficulty (Instructor, Admin; OEP-F-016)
+      parameters:
+        - { name: examId, in: path, required: true, schema: { type: integer, example: 2 } }
+      responses:
+        '200': { description: Analytics }
+  /api/audit-logs:
+    get:
+      summary: Latest 100 audit log entries (Admin; OEP-NF-004)
+      responses:
+        '200': { description: Audit logs }
