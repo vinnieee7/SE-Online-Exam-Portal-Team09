@@ -1,14 +1,27 @@
+const { serverError } = require('../utils/serverError');
 const { run, get, all } = require('../config/db');
 const { logAuditAction } = require('../middleware/logger');
 
 // M3: Exam Delivery / Test-Taking Engine (OEP-F-009..012)
 // Developer: Aditya Rao (PES2UG24CS034)
 
+// Small seeded PRNG (mulberry32): the same seed always yields the same sequence of numbers in [0, 1)
+function seededRandom(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 // Fisher-Yates shuffle algorithm (OEP-F-008)
-function shuffleArray(array) {
+function shuffleArray(array, random = Math.random) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
@@ -56,14 +69,23 @@ exports.startOrGetAttempt = async (req, res) => {
     );
 
     if (!attempt) {
+      // INSERT OR IGNORE + re-read: two simultaneous start requests (double click, React StrictMode)
+      // both end up with the single attempt allowed by UNIQUE(exam_id, student_id) instead of a 500 error
       const startIso = now.toISOString();
       const attRes = await run(
-        'INSERT INTO attempts (exam_id, student_id, start_time, status) VALUES (?, ?, ?, ?)',
+        'INSERT OR IGNORE INTO attempts (exam_id, student_id, start_time, status) VALUES (?, ?, ?, ?)',
         [examId, studentId, startIso, 'in_progress']
       );
-      attempt = await get('SELECT * FROM attempts WHERE id = ?', [attRes.id]);
-      await logAuditAction(studentId, 'EXAM_ATTEMPT_START', `Student started attempt #${attempt.id} on exam #${examId}`, req);
-    } else if (attempt.status === 'submitted' || attempt.status === 'graded') {
+      attempt = await get(
+        'SELECT * FROM attempts WHERE exam_id = ? AND student_id = ?',
+        [examId, studentId]
+      );
+      if (attRes.changes === 1) {
+        await logAuditAction(studentId, 'EXAM_ATTEMPT_START', `Student started attempt #${attempt.id} on exam #${examId}`, req);
+      }
+    }
+
+    if (attempt.status === 'submitted' || attempt.status === 'graded') {
       return res.json({
         status: 'already_submitted',
         attempt,
@@ -99,8 +121,9 @@ exports.startOrGetAttempt = async (req, res) => {
       [examId]
     );
 
-    // Randomize question sequence per student session (OEP-F-008)
-    questions = shuffleArray(questions);
+    // Randomize question sequence per candidate (OEP-F-008, DEV-02). Seeding with the attempt id keeps the
+    // order identical across refreshes and resumes of one attempt, while each candidate gets a different order.
+    questions = shuffleArray(questions, seededRandom(attempt.id));
 
     // Attach options for each question
     for (const q of questions) {
@@ -138,7 +161,7 @@ exports.startOrGetAttempt = async (req, res) => {
       savedAnswers: savedAnswersMap
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to initiate exam attempt', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to initiate exam attempt'));
   }
 };
 
@@ -194,7 +217,7 @@ exports.saveAnswers = async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (err) {
-    res.status(500).json({ error: 'Auto-save failed', details: err.message });
+    res.status(500).json(serverError(err, 'Auto-save failed'));
   }
 };
 
@@ -278,6 +301,10 @@ exports.submitAttempt = async (req, res) => {
       requiresManualGrading: autoGradeResult.hasSubjective
     });
   } catch (err) {
-    res.status(500).json({ error: 'Submission failed', details: err.message });
+    res.status(500).json(serverError(err, 'Submission failed'));
   }
 };
+
+// Exported for verification tests (TC-Exam-04, TC-Take-05)
+exports.shuffleArray = shuffleArray;
+exports.seededRandom = seededRandom;
