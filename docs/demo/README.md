@@ -1,7 +1,5 @@
-# Demo Video Directory
+# Demo Video
 
-Place your 2-minute demonstration MP4 file here named:
-`product-demo.mp4`
+The 2-minute demonstration video was submitted separately and is not stored in this repository.
 
-If hosting on Google Drive or YouTube, specify the URL link inside `docs/DEMO_VIDEO.md` and `README.md`.
-
+The walkthrough script and the commands to run the live demo are in [`docs/DEMO_VIDEO.md`](../DEMO_VIDEO.md).

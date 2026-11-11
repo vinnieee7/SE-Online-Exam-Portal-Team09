@@ -1,10 +1,10 @@
 # Online Exam Portal (OEP) — Development Progress & History
 
 > **Course:** Software Engineering | **Section:** A | **Team Number:** 9  
-> **Evaluation Date:** 30 October 2026 (Development Cycle Frozen)  
+> **Planned Freeze:** 30 October 2026 · **Last Feature Merge:** 2 November 2026 · **Maintenance Release v1.0.1:** 11 November 2026  
 > **Dev Lead:** A S Vincent (`PES2UG24CS002`, `@vinnieee7`)  
 > **QA Lead:** Aadish Sarin (`PES2UG24CS007`)  
-> **Target Repository:** [https://github.com/vinnieee7/SE-Online-Exam-Portal](https://github.com/vinnieee7/SE-Online-Exam-Portal)
+> **Target Repository:** [https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09](https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09)
 
 ---
 
@@ -13,26 +13,33 @@
 ```
 [12 Oct – 19 Oct] Backlog Creation & SRS Extraction
         │
-        ├── Product Backlog Definition (27 items, 91 SP)
-        └── Sprint Planning (Sprint 1: 47 SP | Sprint 2: 44 SP)
+        ├── Product Backlog Definition (28 items, 104 SP as recorded in the GitHub issues)
+        └── Sprint Planning (Sprint 1: 52 SP | Sprint 2: 52 SP)
         │
 [19 Oct – 23 Oct] Sprint 1 Execution
         │
-        ├── Workspace init & GitHub Actions CI (Vincent)
-        ├── SQLite DB Schema & STP Seed Engine (Aditya)
-        ├── Module M1: Auth & RBAC (Vincent)
-        ├── Module M2: Exam & Question CRUD (Aadish)
-        └── Defect Fixes: DEF-001, DEF-002, DEF-003, DEF-004
+        ├── Workspace init & GitHub Actions CI (Vincent)            5260d74, 19 Oct
+        └── Module M1: Auth & RBAC (Vincent), React shell & theme    b7e0f11, 23 Oct
+            (theme by Akshansh), first test suite (by Aadish)
         │
-[26 Oct – 30 Oct] Sprint 2 Execution & Final Release
+[26 Oct – 30 Oct] Sprint 2 Execution
         │
-        ├── Module M3: Delivery Engine & 30s Auto-Save (Aditya)
-        ├── Module M4: Auto-Grading & Analytics (Akshansh)
-        ├── UI Navigation Shell & Dark Mode Design System (Vincent)
-        ├── Security Controls & Audit Logging (Vincent)
-        ├── Cross-Testing & Defect Remediation: DEF-005, DEF-006
-        ├── Automated Test Suite (19/19 Passing)
-        └── Development Cycle Frozen (30 October 2026)
+        ├── SQLite schema & seed (Aditya; committed by Vincent)     1293315, 30 Oct
+        ├── Module M3: Delivery Engine & 30s Auto-Save (Aditya)     32262c0, 30 Oct (PR #28)
+        │     includes the DEF-001 and DEF-002 fixes
+        ├── Module M4: Auto-Grading & Analytics (Akshansh)          39470c5, 8bf7220, 31 Oct (PRs #29, #30)
+        └── Planned development freeze                              30 Oct
+        │
+[1 Nov – 5 Nov] Late Integration & Documentation
+        │
+        ├── Module M2: Exam & Question CRUD (Aadish)                bcfc262, 1 Nov (PR #31 merged 2 Nov)
+        └── Sprint reports, RTM, test report, Kanban                9cfa30d, db92eb4, 5 Nov
+        │
+[11 Nov] Maintenance Release v1.0.1
+        │
+        ├── Fixes DEF-007 – DEF-012 (exam timer, attempt start, DB write speed, error handling)
+        ├── HTTPS mode (TLS 1.2+), 51 automated tests
+        └── Executed evidence: JMeter, OWASP ZAP, Lighthouse/axe
 ```
 
 ---
@@ -69,7 +76,7 @@
 - Strict stripping of `correct_answer` from student delivery payloads (`DEF-001` fix).
 - Server-side object authorization eliminating IDOR vulnerabilities on candidate scorecards (`DEF-005` fix).
 - Persistent audit logging tracking authentication, lockout, exam submission, and administrative events.
-- WCAG 2.1 AA accessible dark mode theme with 4.5:1 contrast ratio.
+- Dark theme meeting WCAG 2.1 AA (4.5:1 contrast, labelled form fields, keyboard-reachable tables), fixed and audited in v1.0.1.
 
 ---
 
@@ -83,6 +90,12 @@
 | **DEF-004** | High (P2) | M2 | Exam end time allowed prior to start time | Missing server validation in controller | Enforced `end_time > start_time` check | **CLOSED** |
 | **DEF-005** | Critical (P1) | M4 | Scorecard IDOR privacy leak | Missing candidate ownership check | Enforced `student_id === req.user.id` | **CLOSED** |
 | **DEF-006** | Medium (P3) | Logger | Test harness crash on remote IP dereference | `req.socket` undefined in Supertest | Added optional chaining with fallback | **CLOSED** |
+| **DEF-007** | Critical (P1) | M3 | Auto-submit at 00:00 failed; attempt stayed in progress | Timer callback captured the first render's `attemptId` (null) | Refs for attempt id and answers; expiry handled in an effect | **CLOSED** (v1.0.1) |
+| **DEF-008** | High (P2) | M3 | Exam clock ran at double speed in development mode | StrictMode ran the start-up effect twice and both timers survived | Effect cancels its own work on cleanup | **CLOSED** (v1.0.1) |
+| **DEF-009** | Medium (P2) | M3 | Simultaneous attempt-start requests returned HTTP 500 | Check-then-insert race on UNIQUE(exam_id, student_id) | `INSERT OR IGNORE` then re-read | **CLOSED** (v1.0.1) |
+| **DEF-010** | Medium (P3) | M3 | Question order changed on every refresh | Unseeded shuffle on each request | Shuffle seeded with the attempt id | **CLOSED** (v1.0.1) |
+| **DEF-011** | High (P2) | DB | Auto-save throughput capped near 60 requests/s under load | One disk flush per SQLite write (rollback journal, synchronous FULL) | WAL journal, synchronous NORMAL | **CLOSED** (v1.0.1) |
+| **DEF-012** | Medium (P2) | All | Invalid requests returned HTTP 500 with internal error details | Missing validation; raw error messages sent to clients | Validation, safe error helper, security headers | **CLOSED** (v1.0.1) |
 
 ---
 
@@ -92,3 +105,5 @@ While all 26 baseline requirements from the SRS are 100% satisfied and verified,
 1. **Webcam Proctoring / Browser Tab Lock:** Future versions can integrate WebRTC video recording and full-screen enforcement API for high-stakes remote proctoring.
 2. **Formula / LaTeX Rendering in Question Prompts:** MathJax/KaTeX integration for mathematical equation rendering in question stems.
 3. **Automated Export to CSV / Excel:** Faculty export button to download class grade books directly in `.xlsx` format.
+4. **Server-side expiry:** the server does not submit an attempt on its own; if a candidate closes the browser before 00:00, the attempt stays in progress until they return.
+5. **Production TLS certificate:** HTTPS mode uses a self-signed development certificate; a deployment would use a CA-issued certificate.

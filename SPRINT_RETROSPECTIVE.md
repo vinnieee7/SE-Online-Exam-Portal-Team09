@@ -1,12 +1,12 @@
 # Agile Sprint Retrospective: Online Exam Portal (OEP)
 
 > **Course:** Software Engineering | **Section:** A | **Team Number:** 9  
-> **Evaluation Period:** 12 October – 30 October 2026  
+> **Evaluation Period:** 12 October – 30 October 2026 (addendum 11 November 2026)  
 > **Facilitator & Dev Lead:** A S Vincent (`PES2UG24CS002`, `@vinnieee7`)  
 > **QA Lead:** Aadish Sarin (`PES2UG24CS007`)  
 > **DevOps Lead:** Aditya Rao (`PES2UG24CS034`)  
 > **Performance Lead:** Akshansh Agrawal (`PES2UG24CS045`)  
-> **Target Repository:** [https://github.com/vinnieee7/SE-Online-Exam-Portal](https://github.com/vinnieee7/SE-Online-Exam-Portal)
+> **Target Repository:** [https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09](https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09)
 
 ---
 
@@ -43,7 +43,7 @@ Our team applied the standard Agile Retrospective framework across four distinct
 
 ### What Went Well
 - **Cross-Testing Mandate Enforcement:** The STP requirement where each developer tested a teammate’s module (Vincent $\rightarrow$ M4, Aadish $\rightarrow$ M1, Aditya $\rightarrow$ M2, Akshansh $\rightarrow$ M3) directly surfaced critical security bugs that the original authors overlooked.
-- **Defect Removal Efficiency (100% DRE):** All 6 logged defects were resolved and verified prior to the 30 October development freeze.
+- **Defect Removal Efficiency (100% DRE):** All 6 logged defects were resolved and verified before release; the DEF-004 fix reached `main` with M2 on 2 November.
 - **Auto-Save Resilience:** The 30-second periodic auto-save and automatic submit upon timer expiry proved rock-solid during network interruption testing.
 
 ### What Went Wrong / Blockers
@@ -62,3 +62,23 @@ Our team applied the standard Agile Retrospective framework across four distinct
 2. **Value of Independent Cross-Testing:** Developers are inherently biased when testing their own code. Cross-testing by peers caught both P1 critical defects (`DEF-001` and `DEF-005`).
 3. **Traceability as a Project Management Tool:** Maintaining the Requirements Traceability Matrix (RTM) from Day 1 ensured that all 26 functional, non-functional, and security requirements were accounted for in test plans and code reviews.
 4. **Automated CI as a Quality Gate:** Rejecting broken PRs automatically in GitHub Actions kept the `main` branch always deployable and ready for evaluation.
+
+---
+
+## 5. Addendum: Post-Sprint Verification (11 November 2026)
+
+### What Went Wrong
+- **Integration slipped past the sprints:** the schema and seed, M2 and the first M3 code reached GitHub on 30 Oct – 1 Nov, and the last feature merge (PR #31) was on 2 November, after the planned 30 October freeze.
+- **Evidence was claimed before it existed:** the backlog and RTM recorded a JMeter result, an accessibility pass and TLS support with no executed run behind them.
+- **The exam timer failed at 00:00:** auto-submit posted to `/attempts/null/submit` (DEF-007), and in development mode the clock ran at double speed (DEF-008). The backend tests could not see either bug because both live in the browser.
+- **Two server-side defects in attempt start:** simultaneous start requests could return HTTP 500 (DEF-009), and the question order changed on every refresh (DEF-010).
+
+### Improvements Made (v1.0.1)
+- Fixed DEF-007 – DEF-012 (including a database write bottleneck found by the load test and unhandled errors found by the ZAP scan), with tests that fail on the old code.
+- Ran the load test (JMeter), a vulnerability scan (OWASP ZAP), an accessibility audit (Lighthouse and axe-core) and TLS tests, and committed the results.
+- Corrected all commit references, dates and story points in the documentation to match git history and the GitHub issues.
+
+### Lessons
+1. **Definition of done = merged to `main`, CI green, evidence committed.** "Done on my machine" did not reach the shared repository in time.
+2. **Test the timer in a real browser, not only through the API.** Integration tests passed while the user-facing behaviour was broken.
+3. **Record measurements, not targets.** A number in a report needs a run, a date and a file behind it.
