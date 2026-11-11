@@ -1,3 +1,4 @@
+const { serverError } = require('../utils/serverError');
 const { run, get, all } = require('../config/db');
 const { logAuditAction } = require('../middleware/logger');
 
@@ -13,6 +14,19 @@ function shuffleArray(array) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+// Returns null when question_ids is a valid array of existing bank ids, otherwise a short description of the bad values
+async function findMissingQuestionIds(questionIds) {
+  if (!Array.isArray(questionIds)) return 'not an array';
+  const ids = questionIds.map(Number);
+  if (ids.some((n) => !Number.isInteger(n) || n <= 0)) return 'non-numeric id';
+  if (ids.length === 0) return null;
+  const placeholders = ids.map(() => '?').join(',');
+  const found = await all(`SELECT id FROM questions WHERE id IN (${placeholders})`, ids);
+  const existing = new Set(found.map((r) => r.id));
+  const missing = [...new Set(ids)].filter((n) => !existing.has(n));
+  return missing.length ? missing.slice(0, 5).join(', ') : null;
 }
 
 // Get All Exams (Role-aware listing - OEP-F-005, OEP-F-009)
@@ -45,7 +59,7 @@ exports.getAllExams = async (req, res) => {
 
     res.json({ exams });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to retrieve exams', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to retrieve exams'));
   }
 };
 
@@ -86,7 +100,7 @@ exports.getExamById = async (req, res) => {
 
     res.json({ exam, questions });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to retrieve exam details', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to retrieve exam details'));
   }
 };
 
@@ -129,6 +143,12 @@ exports.createExam = async (req, res) => {
       return res.status(400).json({
         error: 'Invalid exam schedule: end time must be strictly after start time (DEF-004).'
       });
+    }
+
+    // Every linked question must exist in the bank (otherwise the insert fails with a foreign-key error → 500)
+    const invalidIds = await findMissingQuestionIds(question_ids);
+    if (invalidIds) {
+      return res.status(400).json({ error: `question_ids must be an array of existing question ids (invalid: ${invalidIds})` });
     }
 
     // Compute total marks from linked questions if not explicitly provided
@@ -195,7 +215,7 @@ exports.createExam = async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create exam', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to create exam'));
   }
 };
 
@@ -259,6 +279,13 @@ exports.updateExam = async (req, res) => {
       ]
     );
 
+    if (question_ids !== undefined) {
+      const invalidIds = await findMissingQuestionIds(question_ids);
+      if (invalidIds) {
+        return res.status(400).json({ error: `question_ids must be an array of existing question ids (invalid: ${invalidIds})` });
+      }
+    }
+
     if (Array.isArray(question_ids)) {
       await run('DELETE FROM exam_questions WHERE exam_id = ?', [id]);
       for (let i = 0; i < question_ids.length; i++) {
@@ -276,7 +303,7 @@ exports.updateExam = async (req, res) => {
       examId: Number(id)
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update exam', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to update exam'));
   }
 };
 
@@ -295,7 +322,7 @@ exports.deleteExam = async (req, res) => {
 
     res.json({ message: 'Exam deleted successfully' });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to delete exam', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to delete exam'));
   }
 };
 
@@ -313,7 +340,7 @@ exports.getQuestionBank = async (req, res) => {
 
     res.json({ questions });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to load question bank', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to load question bank'));
   }
 };
 
@@ -417,7 +444,7 @@ exports.addQuestion = async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to add question to bank', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to add question to bank'));
   }
 };
 
@@ -436,7 +463,7 @@ exports.deleteQuestion = async (req, res) => {
 
     res.json({ message: 'Question deleted successfully' });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to delete question', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to delete question'));
   }
 };
 

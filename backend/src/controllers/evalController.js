@@ -1,3 +1,4 @@
+const { serverError } = require('../utils/serverError');
 const { run, get, all } = require('../config/db');
 const { logAuditAction } = require('../middleware/logger');
 
@@ -65,7 +66,7 @@ exports.getExamSubmissions = async (req, res) => {
 
     res.json({ submissions });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch submissions', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to fetch submissions'));
   }
 };
 
@@ -154,7 +155,7 @@ exports.gradeManual = async (req, res) => {
       pendingCount
     });
   } catch (err) {
-    res.status(500).json({ error: 'Manual grading failed', details: err.message });
+    res.status(500).json(serverError(err, 'Manual grading failed'));
   }
 };
 
@@ -249,7 +250,7 @@ exports.getScorecard = async (req, res) => {
 
     await sendScorecard(req, res, attempt);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch scorecard', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to fetch scorecard'));
   }
 };
 
@@ -269,7 +270,7 @@ exports.getMyScorecard = async (req, res) => {
 
     await sendScorecard(req, res, attempt);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch scorecard', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to fetch scorecard'));
   }
 };
 
@@ -374,7 +375,7 @@ exports.getExamAnalytics = async (req, res) => {
       itemAnalysis
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to generate analytics', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to generate analytics'));
   }
 };
 

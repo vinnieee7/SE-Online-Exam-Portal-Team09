@@ -107,9 +107,9 @@ const AuthPage = () => {
         <form onSubmit={handleSubmit}>
           {!isLogin && (
             <div className="form-group">
-              <label className="form-label">Full Name</label>
+              <label className="form-label" htmlFor="auth-name">Full Name</label>
               <div style={{ position: 'relative' }}>
-                <input
+                <input id="auth-name"
                   type="text"
                   required
                   className="form-control"
@@ -122,8 +122,8 @@ const AuthPage = () => {
           )}
 
           <div className="form-group">
-            <label className="form-label">PES University Email</label>
-            <input
+            <label className="form-label" htmlFor="auth-email">PES University Email</label>
+            <input id="auth-email"
               type="email"
               required
               className="form-control"
@@ -134,8 +134,8 @@ const AuthPage = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password</label>
-            <input
+            <label className="form-label" htmlFor="auth-password">Password</label>
+            <input id="auth-password"
               type="password"
               required
               className="form-control"
@@ -147,8 +147,8 @@ const AuthPage = () => {
 
           {!isLogin && (
             <div className="form-group">
-              <label className="form-label">Select Role (RBAC - OEP-F-004)</label>
-              <select
+              <label className="form-label" htmlFor="auth-role">Select Role (RBAC - OEP-F-004)</label>
+              <select id="auth-role"
                 className="form-control"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}

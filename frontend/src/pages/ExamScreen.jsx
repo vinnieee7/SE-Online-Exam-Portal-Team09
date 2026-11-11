@@ -16,16 +16,24 @@ const ExamScreen = ({ examId, onFinishExam, onExit }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Refs give the interval callbacks the latest values instead of the ones from the first render
   const answersRef = useRef(answers);
   answersRef.current = answers;
+  const attemptIdRef = useRef(null);
+  const submittingRef = useRef(false); // blocks a second submission while one is in flight
 
   // Initialize Exam Session
   useEffect(() => {
+    // React StrictMode mounts this effect twice in development. Without this flag the first,
+    // already-cleaned-up mount would still start its own timer and the clock would run at double speed (DEF-008).
+    let cancelled = false;
     let timerInterval = null;
     let autoSaveInterval = null;
 
     api.get(`/delivery/exams/${examId}/attempt`)
       .then((res) => {
+        if (cancelled) return;
+
         if (res.data.status === 'already_submitted') {
           alert('You have already submitted this exam.');
           onFinishExam();
@@ -33,6 +41,7 @@ const ExamScreen = ({ examId, onFinishExam, onExit }) => {
         }
 
         const { attemptId: attId, exam, questions: qList, savedAnswers = {} } = res.data;
+        attemptIdRef.current = attId;
         setAttemptId(attId);
         setExamData(exam);
         setQuestions(qList);
@@ -40,29 +49,25 @@ const ExamScreen = ({ examId, onFinishExam, onExit }) => {
         setAnswers(savedAnswers);
         setLoading(false);
 
-        // Start countdown timer (OEP-F-010)
+        // Countdown display (OEP-F-010). The server's remaining_seconds is the source of truth;
+        // expiry is handled by the effect below, never inside this state updater.
         timerInterval = setInterval(() => {
-          setSecondsLeft((prev) => {
-            if (prev <= 1) {
-              clearInterval(timerInterval);
-              handleAutoSubmit();
-              return 0;
-            }
-            return prev - 1;
-          });
+          setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
         }, 1000);
 
         // Periodic 30s auto-save (OEP-F-011, TC-Take-03)
         autoSaveInterval = setInterval(() => {
-          triggerAutoSave(attId, answersRef.current);
+          triggerAutoSave(attemptIdRef.current, answersRef.current);
         }, 30000);
       })
       .catch((err) => {
+        if (cancelled) return;
         setError(err.response?.data?.error || 'Failed to start exam session');
         setLoading(false);
       });
 
     return () => {
+      cancelled = true;
       if (timerInterval) clearInterval(timerInterval);
       if (autoSaveInterval) clearInterval(autoSaveInterval);
     };
@@ -120,28 +125,42 @@ const ExamScreen = ({ examId, onFinishExam, onExit }) => {
     });
   };
 
-  const handleAutoSubmit = () => {
-    alert('Time has expired! Automatically submitting your answers to the evaluation engine (OEP-F-011).');
-    submitFinalExam();
-  };
-
-  const submitFinalExam = async () => {
-    if (isSubmitting) return;
+  // Final submission, used by the confirm button and by the timer.
+  // The alert comes after the request so a time-up submission is never held up waiting for a click.
+  const submitFinalExam = async ({ auto = false } = {}) => {
+    const attId = attemptIdRef.current;
+    if (!attId || submittingRef.current) return;
+    submittingRef.current = true;
     setIsSubmitting(true);
 
     try {
-      // Final flush of answers
-      await triggerAutoSave(attemptId, answers);
-      await api.post(`/delivery/attempts/${attemptId}/submit`);
-      alert('Examination submitted successfully! Auto-grading has been completed.');
+      // Final flush of the latest answers before locking the attempt
+      await triggerAutoSave(attId, answersRef.current);
+      await api.post(`/delivery/attempts/${attId}/submit`);
+      alert(
+        auto
+          ? 'Time is up. Your answers were submitted automatically (OEP-F-011).'
+          : 'Examination submitted successfully! Auto-grading has been completed.'
+      );
       onFinishExam();
     } catch (err) {
+      submittingRef.current = false; // let the candidate retry with Finish & Submit
       alert('Error during final submission: ' + (err.response?.data?.error || err.message));
     } finally {
       setIsSubmitting(false);
       setShowSubmitModal(false);
     }
   };
+
+  // Auto-submit when the countdown reaches 00:00 (OEP-F-011, DEF-007).
+  // Runs after render, so it sees the real attempt id and the latest answers. It depends only on the
+  // countdown and the attempt: re-running on every new submitFinalExam would retry a failed submit in a loop.
+  useEffect(() => {
+    if (secondsLeft === 0 && attemptId) {
+      submitFinalExam({ auto: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondsLeft, attemptId]);
 
   const formatTimer = (totalSeconds) => {
     if (totalSeconds === null) return '00:00';
@@ -359,7 +378,7 @@ const ExamScreen = ({ examId, onFinishExam, onExit }) => {
               <button onClick={() => setShowSubmitModal(false)} className="btn btn-secondary">
                 Continue Test
               </button>
-              <button onClick={submitFinalExam} className="btn btn-primary" disabled={isSubmitting}>
+              <button onClick={() => submitFinalExam()} className="btn btn-primary" disabled={isSubmitting}>
                 {isSubmitting ? 'Submitting...' : 'Yes, Submit Assessment'}
               </button>
             </div>

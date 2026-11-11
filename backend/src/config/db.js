@@ -14,6 +14,11 @@ const db = new sqlite3.Database(dbPath, (err) => {
   } else {
     // Enable foreign keys
     db.run('PRAGMA foreign_keys = ON;');
+    // Write-ahead logging with NORMAL sync: each auto-save commit no longer waits for its own disk flush,
+    // which capped the API at about 60 auto-saves per second under load (DEF-011, OEP-NF-002)
+    db.run('PRAGMA journal_mode = WAL;');
+    db.run('PRAGMA synchronous = NORMAL;');
+    db.run('PRAGMA busy_timeout = 5000;');
   }
 });
 

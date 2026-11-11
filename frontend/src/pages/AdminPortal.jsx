@@ -81,7 +81,7 @@ const AdminPortal = () => {
       </div>
 
       {activeTab === 'users' ? (
-        <div className="table-responsive card">
+        <div className="table-responsive card" tabIndex={0} role="region" aria-label="User accounts">
           <table className="table">
             <thead>
               <tr>
@@ -100,7 +100,7 @@ const AdminPortal = () => {
                   <td>{u.name}</td>
                   <td>{u.email}</td>
                   <td>
-                    <select
+                    <select aria-label={`Role for ${u.email}`}
                       className="form-control"
                       style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', width: 'auto' }}
                       value={u.role}
@@ -131,7 +131,7 @@ const AdminPortal = () => {
           </table>
         </div>
       ) : (
-        <div className="table-responsive card">
+        <div className="table-responsive card" tabIndex={0} role="region" aria-label="Security audit trail">
           <table className="table">
             <thead>
               <tr>
