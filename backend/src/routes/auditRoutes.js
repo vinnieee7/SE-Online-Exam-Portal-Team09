@@ -1,3 +1,4 @@
+const { serverError } = require('../utils/serverError');
 const express = require('express');
 const router = express.Router();
 const { all } = require('../config/db');
@@ -17,7 +18,7 @@ router.get('/', requireRole('Admin'), async (req, res) => {
     );
     res.json({ logs });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to retrieve audit logs', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to retrieve audit logs'));
   }
 });
 

@@ -1,3 +1,4 @@
+const { serverError } = require('../utils/serverError');
 const jwt = require('jsonwebtoken');
 const { get } = require('../config/db');
 
@@ -31,7 +32,7 @@ async function authenticateToken(req, res, next) {
       req.user = user;
       next();
     } catch (dbErr) {
-      return res.status(500).json({ error: 'Database verification failed', details: dbErr.message });
+      return res.status(500).json(serverError(dbErr, 'Database verification failed'));
     }
   });
 }
