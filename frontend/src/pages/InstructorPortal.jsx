@@ -222,7 +222,7 @@ const InstructorPortal = () => {
 
       {/* TAB 1: EXAMS LIST */}
       {activeTab === 'exams' && (
-        <div className="table-responsive card">
+        <div className="table-responsive card" tabIndex={0} role="region" aria-label="Exams">
           <table className="table">
             <thead>
               <tr>
@@ -270,7 +270,7 @@ const InstructorPortal = () => {
 
       {/* TAB 2: QUESTION BANK */}
       {activeTab === 'questions' && (
-        <div className="table-responsive card">
+        <div className="table-responsive card" tabIndex={0} role="region" aria-label="Question bank">
           <table className="table">
             <thead>
               <tr>
@@ -317,8 +317,8 @@ const InstructorPortal = () => {
       {activeTab === 'submissions' && (
         <div className="card">
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Select Exam to Grade:</label>
-            <select
+            <label htmlFor="grade-exam-select" style={{ fontSize: '0.875rem', fontWeight: 600 }}>Select Exam to Grade:</label>
+            <select id="grade-exam-select"
               className="form-control"
               style={{ maxWidth: '320px' }}
               value={selectedExamId || ''}
@@ -333,7 +333,7 @@ const InstructorPortal = () => {
             </select>
           </div>
 
-          <div className="table-responsive">
+          <div className="table-responsive" tabIndex={0} role="region" aria-label="Submissions">
             <table className="table">
               <thead>
                 <tr>
@@ -389,8 +389,8 @@ const InstructorPortal = () => {
         <div>
           <div className="card" style={{ marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Select Exam for Analytics:</label>
-              <select
+              <label htmlFor="analytics-exam-select" style={{ fontSize: '0.875rem', fontWeight: 600 }}>Select Exam for Analytics:</label>
+              <select id="analytics-exam-select"
                 className="form-control"
                 style={{ maxWidth: '350px' }}
                 value={selectedExamId || ''}
@@ -438,7 +438,7 @@ const InstructorPortal = () => {
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '1rem' }}>
                   Item Difficulty Analysis (% Accuracy per Question)
                 </h3>
-                <div className="table-responsive">
+                <div className="table-responsive" tabIndex={0} role="region" aria-label="Item difficulty analysis">
                   <table className="table">
                     <thead>
                       <tr>
@@ -490,8 +490,8 @@ const InstructorPortal = () => {
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem' }}>Schedule New Examination (M2)</h3>
             <form onSubmit={handleCreateExam}>
               <div className="form-group">
-                <label className="form-label">Exam Title</label>
-                <input
+                <label className="form-label" htmlFor="exam-title">Exam Title</label>
+                <input id="exam-title"
                   type="text"
                   required
                   className="form-control"
@@ -502,8 +502,8 @@ const InstructorPortal = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Description / Scope</label>
-                <textarea
+                <label className="form-label" htmlFor="exam-desc">Description / Scope</label>
+                <textarea id="exam-desc"
                   className="form-control"
                   rows={2}
                   placeholder="Covers Modules 1 to 4"
@@ -514,8 +514,8 @@ const InstructorPortal = () => {
 
               <div className="grid-cols-2">
                 <div className="form-group">
-                  <label className="form-label">Duration (Minutes)</label>
-                  <input
+                  <label className="form-label" htmlFor="exam-duration">Duration (Minutes)</label>
+                  <input id="exam-duration"
                     type="number"
                     min="5"
                     className="form-control"
@@ -524,8 +524,8 @@ const InstructorPortal = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Start Time</label>
-                  <input
+                  <label className="form-label" htmlFor="exam-start">Start Time</label>
+                  <input id="exam-start"
                     type="datetime-local"
                     className="form-control"
                     value={newStartTime}
@@ -535,8 +535,8 @@ const InstructorPortal = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">End Time</label>
-                <input
+                <label className="form-label" htmlFor="exam-end">End Time</label>
+                <input id="exam-end"
                   type="datetime-local"
                   className="form-control"
                   value={newEndTime}
@@ -583,8 +583,8 @@ const InstructorPortal = () => {
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem' }}>Add Question to Question Bank</h3>
             <form onSubmit={handleCreateQuestion}>
               <div className="form-group">
-                <label className="form-label">Question Text</label>
-                <textarea
+                <label className="form-label" htmlFor="q-text">Question Text</label>
+                <textarea id="q-text"
                   className="form-control"
                   rows={3}
                   required
@@ -596,8 +596,8 @@ const InstructorPortal = () => {
 
               <div className="grid-cols-2">
                 <div className="form-group">
-                  <label className="form-label">Question Type</label>
-                  <select
+                  <label className="form-label" htmlFor="q-type">Question Type</label>
+                  <select id="q-type"
                     className="form-control"
                     value={qType}
                     onChange={(e) => setQType(e.target.value)}
@@ -608,8 +608,8 @@ const InstructorPortal = () => {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Marks</label>
-                  <input
+                  <label className="form-label" htmlFor="q-marks">Marks</label>
+                  <input id="q-marks"
                     type="number"
                     min="1"
                     className="form-control"
@@ -625,7 +625,7 @@ const InstructorPortal = () => {
                   {qOptions.map((opt, i) => (
                     <div key={opt.option_key} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.4rem', alignItems: 'center' }}>
                       <span style={{ fontWeight: 600, width: '20px' }}>{opt.option_key}.</span>
-                      <input
+                      <input aria-label={`Option ${opt.option_key} text`}
                         type="text"
                         required
                         className="form-control"
@@ -643,21 +643,21 @@ const InstructorPortal = () => {
               )}
 
               <div className="form-group">
-                <label className="form-label">Correct Answer Key</label>
+                <label className="form-label" htmlFor="q-answer">Correct Answer Key</label>
                 {qType === 'MCQ' ? (
-                  <select className="form-control" value={qAns} onChange={(e) => setQAns(e.target.value)}>
+                  <select id="q-answer" className="form-control" value={qAns} onChange={(e) => setQAns(e.target.value)}>
                     <option value="A">Option A</option>
                     <option value="B">Option B</option>
                     <option value="C">Option C</option>
                     <option value="D">Option D</option>
                   </select>
                 ) : qType === 'TrueFalse' ? (
-                  <select className="form-control" value={qAns} onChange={(e) => setQAns(e.target.value)}>
+                  <select id="q-answer" className="form-control" value={qAns} onChange={(e) => setQAns(e.target.value)}>
                     <option value="True">True</option>
                     <option value="False">False</option>
                   </select>
                 ) : (
-                  <input
+                  <input id="q-answer"
                     type="text"
                     required
                     className="form-control"
@@ -669,8 +669,8 @@ const InstructorPortal = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Explanation / Solution Guide</label>
-                <input
+                <label className="form-label" htmlFor="q-expl">Explanation / Solution Guide</label>
+                <input id="q-expl"
                   type="text"
                   className="form-control"
                   placeholder="Rationale displayed after grading..."
@@ -708,7 +708,7 @@ const InstructorPortal = () => {
                 <div key={q.answer_id} style={{ background: 'var(--bg-elevated)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                     <span style={{ fontWeight: 600 }}>Q{idx + 1} ({q.question_type})</span>
-                    <span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>Max: {q.max_marks} Marks</span>
+                    <span style={{ color: 'var(--accent-primary-text)', fontWeight: 600 }}>Max: {q.max_marks} Marks</span>
                   </div>
 
                   <p style={{ fontSize: '0.9rem', marginBottom: '0.75rem' }}>{q.question_text}</p>
@@ -721,8 +721,8 @@ const InstructorPortal = () => {
                   {q.question_type === 'ShortAnswer' ? (
                     <div className="grid-cols-2" style={{ gap: '0.75rem' }}>
                       <div>
-                        <label className="form-label" style={{ fontSize: '0.75rem' }}>Award Marks (out of {q.max_marks})</label>
-                        <input
+                        <label className="form-label" htmlFor={`grade-marks-${q.answer_id}`} style={{ fontSize: '0.75rem' }}>Award Marks (out of {q.max_marks})</label>
+                        <input id={`grade-marks-${q.answer_id}`}
                           type="number"
                           max={q.max_marks}
                           min="0"
@@ -733,8 +733,8 @@ const InstructorPortal = () => {
                         />
                       </div>
                       <div>
-                        <label className="form-label" style={{ fontSize: '0.75rem' }}>Faculty Feedback</label>
-                        <input
+                        <label className="form-label" htmlFor={`grade-feedback-${q.answer_id}`} style={{ fontSize: '0.75rem' }}>Faculty Feedback</label>
+                        <input id={`grade-feedback-${q.answer_id}`}
                           type="text"
                           className="form-control"
                           placeholder="e.g. Well articulated"
