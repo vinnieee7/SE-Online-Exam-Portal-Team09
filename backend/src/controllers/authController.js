@@ -1,3 +1,5 @@
+const { serverError } = require('../utils/serverError');
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { run, get, all } = require('../config/db');
@@ -15,8 +17,10 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
 
-    if (!['Student', 'Instructor', 'Admin'].includes(role)) {
-      return res.status(400).json({ error: 'Invalid role specified. Must be Student, Instructor, or Admin' });
+    // Self-registration may request Student or Instructor only; Admin rights are granted by an existing
+    // Administrator through PATCH /api/auth/users/:id (OEP-F-004, TC-Sec-03g)
+    if (!['Student', 'Instructor'].includes(role)) {
+      return res.status(400).json({ error: 'Invalid role specified. Self-registration allows Student or Instructor' });
     }
 
     // Check email uniqueness (AC-F-001, TC-Auth-01)
@@ -47,7 +51,7 @@ exports.register = async (req, res) => {
     });
   } catch (err) {
     console.error('Registration error:', err);
-    res.status(500).json({ error: 'Internal server error during registration', details: err.message });
+    res.status(500).json(serverError(err, 'Internal server error during registration'));
   }
 };
 
@@ -104,7 +108,7 @@ exports.login = async (req, res) => {
     });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ error: 'Internal server error during login', details: err.message });
+    res.status(500).json(serverError(err, 'Internal server error during login'));
   }
 };
 
@@ -127,8 +131,11 @@ exports.requestPasswordReset = async (req, res) => {
       return res.json({ message: 'If this email exists in our system, a 6-digit OTP has been dispatched.' });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString(); // cryptographically secure 6-digit code
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 mins expiry
+
+    // A new code replaces any earlier unused one (OEP-F-003 acceptance criterion 1)
+    await run('UPDATE password_resets SET used = 1 WHERE user_id = ? AND used = 0', [user.id]);
 
     await run(
       'INSERT INTO password_resets (user_id, otp, expires_at) VALUES (?, ?, ?)',
@@ -144,7 +151,7 @@ exports.requestPasswordReset = async (req, res) => {
       expires_in_minutes: 15
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to request password reset', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to request password reset'));
   }
 };
 
@@ -181,7 +188,7 @@ exports.verifyPasswordReset = async (req, res) => {
 
     res.json({ message: 'Password successfully updated. You may now login.' });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to reset password', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to reset password'));
   }
 };
 
@@ -191,7 +198,7 @@ exports.getAllUsers = async (req, res) => {
     const users = await all('SELECT id, name, email, role, is_locked, created_at FROM users ORDER BY id ASC');
     res.json({ users });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch users', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to fetch users'));
   }
 };
 
@@ -200,7 +207,7 @@ exports.updateUserStatus = async (req, res) => {
     const { id } = req.params;
     const { role, is_locked } = req.body;
 
-    if (role && !['Student', 'Instructor', 'Admin'].includes(role)) {
+    if (role !== undefined && !['Student', 'Instructor', 'Admin'].includes(role)) {
       return res.status(400).json({ error: 'Invalid role' });
     }
 
@@ -227,6 +234,6 @@ exports.updateUserStatus = async (req, res) => {
 
     res.json({ message: 'User updated successfully' });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update user', details: err.message });
+    res.status(500).json(serverError(err, 'Failed to update user'));
   }
 };
