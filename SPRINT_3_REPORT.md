@@ -126,3 +126,4 @@ With the conclusion of Sprint 3, all academic requirements of the Software Engin
 - **Aadish Sarin (`PES2UG24CS007`)** — *Team & QA Lead*
 - **Aditya Rao (`PES2UG24CS034`)** — *DevOps Lead*
 - **Akshansh Agrawal (`PES2UG24CS045`)** — *Performance Lead*
+

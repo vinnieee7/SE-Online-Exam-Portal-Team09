@@ -190,25 +190,15 @@ exports.saveAnswers = async (req, res) => {
 
     // Upsert each answer into answers table
     for (const ans of answers) {
-      const existing = await get(
-        'SELECT id FROM answers WHERE attempt_id = ? AND question_id = ?',
-        [attemptId, ans.question_id]
+      await run(
+        `INSERT INTO answers (attempt_id, question_id, selected_option, short_answer_text) 
+         VALUES (?, ?, ?, ?)
+         ON CONFLICT(attempt_id, question_id) DO UPDATE SET
+           selected_option = excluded.selected_option,
+           short_answer_text = excluded.short_answer_text,
+           updated_at = CURRENT_TIMESTAMP`,
+        [attemptId, ans.question_id, ans.selected_option || null, ans.short_answer_text || null]
       );
-
-      if (existing) {
-        await run(
-          `UPDATE answers 
-           SET selected_option = ?, short_answer_text = ?, updated_at = CURRENT_TIMESTAMP 
-           WHERE id = ?`,
-          [ans.selected_option || null, ans.short_answer_text || null, existing.id]
-        );
-      } else {
-        await run(
-          `INSERT INTO answers (attempt_id, question_id, selected_option, short_answer_text) 
-           VALUES (?, ?, ?, ?)`,
-          [attemptId, ans.question_id, ans.selected_option || null, ans.short_answer_text || null]
-        );
-      }
     }
 
     res.json({

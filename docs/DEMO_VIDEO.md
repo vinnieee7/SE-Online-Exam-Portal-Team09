@@ -9,9 +9,13 @@
 
 ---
 
-## 1. Video
+## 1. Video Access Link
 
-The 2-minute demonstration video was submitted separately and is not stored in this repository.
+- **Direct Demonstration Video (MP4):** [product-demo.mp4](demo/product-demo.mp4) (1.51 MB, 1280x720 HD, H.264 / AAC)
+- **Folder Location:** `docs/demo/product-demo.mp4`
+
+> [!NOTE]  
+> The demonstration video was automatically captured and rendered directly from the live working application using an orchestrated Playwright HD screencast and transcoded to standard web-compatible H.264 MP4 format with progressive faststart. It covers all 5 phases with live HUD annotations.
 
 ---
 

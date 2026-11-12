@@ -90,3 +90,4 @@ All mission-critical business paths, cryptographic routines, security policies, 
 - **Aadish Sarin (`PES2UG24CS007`)** — *QA Lead*
 - **A S Vincent (`PES2UG24CS002`, `@vinnieee7`)** — *Dev Lead & Facilitator*
 - **Akshansh Agrawal (`PES2UG24CS045`)** — *Performance Lead*
+

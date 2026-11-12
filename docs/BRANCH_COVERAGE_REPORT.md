@@ -141,3 +141,4 @@ All high-impact security, business logic, scoring, and data validation branches 
 - **A S Vincent (`PES2UG24CS002`, `@vinnieee7`)** — *Dev Lead & Facilitator*
 - **Akshansh Agrawal (`PES2UG24CS045`)** — *Performance Lead*
 - **Aditya Rao (`PES2UG24CS034`)** — *DevOps Lead*
+
