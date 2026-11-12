@@ -44,11 +44,16 @@ npm run db:reset
 ```
 
 ### 4. Run Automated Test Suite (Jest + Supertest)
-Verify all 26 requirements across Modules M1, M2, M3, M4 and Security controls:
+Verify all functional requirements, unit components, and security controls across Modules M1, M2, M3, M4:
 ```bash
 npm test
 ```
-*Expected: 51 / 51 tests passing in 3 suites — `api.test.js` (19), `security.test.js` (19), `verification.test.js` (13).*
+*Expected: All test suites passing (34 unit tests + 51 integration & security tests = 85 tests total, 100% pass rate).*
+
+Run coverage analysis:
+```bash
+npm --prefix backend test -- --coverage
+```
 
 ### 5. Launch the Application
 
@@ -115,6 +120,14 @@ All accounts share the default test password: `Password@123`
    - HTTPS mode with TLS 1.2 minimum; 51 automated tests.
    - Executed evidence: [load test (JMeter)](docs/deliverable-4/evidence/performance-load-test.md), [security scan (OWASP ZAP)](docs/deliverable-4/evidence/security-scan.md), [accessibility audit (Lighthouse, axe-core)](docs/deliverable-4/evidence/accessibility-audit.md).
 
+4. **Sprint-3 / Mini-Project Part-3 QA Mandate [2nd Nov to 6th Nov 2026]:**
+   - **Test Cases Updation:** [UPDATED_TEST_CASES.md](docs/UPDATED_TEST_CASES.md) updating all STP test cases with sprint and regression additions.
+   - **Unit Test Report:** [UNIT_TEST_REPORT.md](docs/UNIT_TEST_REPORT.md) detailing 34 unit tests across 5 suites (100% pass).
+   - **System Validation Report:** [SYSTEM_VALIDATION_REPORT.md](docs/SYSTEM_VALIDATION_REPORT.md) with 4 scenario-based end-to-end integration workflows.
+   - **Code Coverage Report:** [CODE_COVERAGE_REPORT.md](docs/CODE_COVERAGE_REPORT.md) recording 68.20% statements, 70.76% functions, 67.75% lines.
+   - **Branch Coverage Report:** [BRANCH_COVERAGE_REPORT.md](docs/BRANCH_COVERAGE_REPORT.md) recording 48.20% condition/decision branch coverage.
+   - **Sprint 3 Parallel QA Execution:** [SPRINT_3_REPORT.md](SPRINT_3_REPORT.md) (20 SP completed).
+
 ---
 
 ## 🔗 Project Management & Tracking Links
@@ -124,11 +137,17 @@ All accounts share the default test password: `Password@123`
 - **Visual Kanban Board:** [VISUAL_KANBAN_BOARD.md](docs/VISUAL_KANBAN_BOARD.md)
 - **Sprint 1 Execution Report:** [SPRINT_1_REPORT.md](SPRINT_1_REPORT.md)
 - **Sprint 2 Execution Report:** [SPRINT_2_REPORT.md](SPRINT_2_REPORT.md)
+- **Sprint 3 Execution Report (Part-3 QA):** [SPRINT_3_REPORT.md](SPRINT_3_REPORT.md)
 - **Sprint Retrospective:** [SPRINT_RETROSPECTIVE.md](SPRINT_RETROSPECTIVE.md)
 - **Development Progress & History:** [DEVELOPMENT_PROGRESS.md](DEVELOPMENT_PROGRESS.md)
 - **Deviations from Baseline (SAD/SRS):** [DEVIATIONS_FROM_BASELINE.md](docs/DEVIATIONS_FROM_BASELINE.md)
 - **2-Minute Demonstration (script and run steps; video submitted separately):** [DEMO_VIDEO.md](docs/DEMO_VIDEO.md)
 - **Software Test Execution Report (STP §8–§14):** [TEST_EXECUTION_REPORT.md](docs/TEST_EXECUTION_REPORT.md)
+- **Updated Test Case Document (Part-3 §1):** [UPDATED_TEST_CASES.md](docs/UPDATED_TEST_CASES.md)
+- **Unit Test Report (Part-3 §2.b.i):** [UNIT_TEST_REPORT.md](docs/UNIT_TEST_REPORT.md)
+- **System Validation Report (Part-3 §2.b.ii):** [SYSTEM_VALIDATION_REPORT.md](docs/SYSTEM_VALIDATION_REPORT.md)
+- **Code Coverage Report (Part-3 §2.b.iii):** [CODE_COVERAGE_REPORT.md](docs/CODE_COVERAGE_REPORT.md)
+- **Branch Coverage Report (Part-3 §2.b.iv):** [BRANCH_COVERAGE_REPORT.md](docs/BRANCH_COVERAGE_REPORT.md)
 - **Completed Requirements Traceability Matrix:** [Completed_RTM.md](docs/deliverable-4/Completed_RTM.md)
 - **Defect Tracking Log:** [defect-log.md](docs/deliverable-4/defect-log.md)
 - **Automated Test Log Evidence:** [test-execution-evidence.md](docs/deliverable-4/evidence/test-execution-evidence.md)

@@ -14,25 +14,26 @@
 The Product Backlog encompasses all functional requirements (FR), non-functional requirements (NFR), security constraints (SR), bug remediation items (DEF), and DevOps environment prerequisites extracted from the Software Requirements Specification (SRS v1.1) and Software Test Plan (STP v1.0).
 
 - **Estimation Scale:** Modified Fibonacci sequence (`1, 2, 3, 5, 8, 13`) story points (SP).
-- **Total Backlog Items:** 28 items (GitHub issues #1–#27 and #32).
-- **Total Backlog Size:** 104 story points. Feature issues carry their points in the GitHub issue body; the six bug issues (#11–#14, #25, #26) have no points field on GitHub, so their points come from this file.
-- **Sprint Distribution:** Two fixed cycles:
+- **Total Backlog Items:** 28 core issues (#1–#27 and #32) + 4 Sprint-3 QA epics.
+- **Total Backlog Velocity:** 124 Story Points (104 SP core + 20 SP Sprint-3 QA).
+- **Sprint Distribution:**
   - **Sprint 1 (19 Oct – 23 Oct 2026):** Foundation, Auth/RBAC (M1), Exam Management (M2), initial defect fixes (52 SP).
-  - **Sprint 2 (26 Oct – 30 Oct 2026):** Exam Delivery (M3), Evaluation & Analytics (M4), UI/UX Shell, Security & Audit, Final Verification (52 SP).
+  - **Sprint 2 (26 Oct – 30 Oct 2026):** Exam Delivery (M3), Evaluation & Analytics (M4), UI/UX Shell, Security & Audit, Performance Load Test (52 SP).
+  - **Sprint 3 (02 Nov – 06 Nov 2026):** Part-3 Testing & QA Parallel Activity — Unit Test Suites (34 tests), System Validation, Code Coverage & Branch Coverage Reports (20 SP).
 - **Delivery against plan (git history):** the workspace and M1 (22 SP) have commits dated inside Sprint 1. The schema and seed (#2), M2 (#7–#10, #14) and the DEF-001/DEF-002 fixes (#11, #12) were committed 30 Oct – 1 Nov and were all on `main` by 2 Nov 2026 (PR #28, PR #31). Details: [SPRINT_1_REPORT.md](SPRINT_1_REPORT.md).
 - **Maintenance release v1.0.1 (11 Nov 2026):** six defects found in viva-preparation testing (DEF-007 – DEF-012) were fixed, and the performance, accessibility, TLS and security-scan requirements were verified with executed evidence. See [section 6](#6-maintenance-release-v101-11-nov-2026).
 
 ---
 
-## 2. Team Work Allocation Summary (Balanced Distribution — 7 Issues Each)
+## 2. Team Work Allocation Summary (Balanced Distribution across All Sprints)
 
-| Member Name | SRN | Primary Module / Responsibility | Issues Assigned | Sprint 1 SP | Sprint 2 SP | Total SP |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: |
-| **A S Vincent** | `PES2UG24CS002` | **Dev Lead & Facilitator:** Module M1 (Auth & RBAC), Security Audit Trail, Cross-Testing M4 | **7 Issues** (#1, #3, #4, #5, #6, #13, #24) | 22 | 5 | **27 SP** |
-| **Aadish Sarin** | `PES2UG24CS007` | **Team & QA Lead:** Module M2 (Exam Lifecycle, Question Bank), Integration Test Suite, RTM | **7 Issues** (#7, #8, #9, #10, #14, #26, #27) | 21 | 3 | **24 SP** |
-| **Aditya Rao** | `PES2UG24CS034` | **DevOps Lead:** Module M3 (Delivery Engine, Timer, Auto-save), Database Schema & Seed | **7 Issues** (#2, #11, #12, #15, #16, #17, #18) | 9 | 16 | **25 SP** |
-| **Akshansh Agrawal** | `PES2UG24CS045` | **Performance & UX Lead:** Module M4 (Auto-Grading, Analytics), UI Shell, JMeter Load Testing | **7 Issues** (#19, #20, #21, #22, #23, #25, #32) | 0 | 28 | **28 SP** |
-| **Team Total** | — | — | **28 Issues** | **52 SP** | **52 SP** | **104 SP** |
+| Member Name | SRN | Primary Module / Responsibility | Core Issues | Sprint 1 SP | Sprint 2 SP | Sprint 3 SP | Total SP |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **A S Vincent** | `PES2UG24CS002` | **Dev Lead & Facilitator:** Module M1 (Auth & RBAC), Security Audit Trail, Branch Coverage Report | **7 Issues** (#1, #3, #4, #5, #6, #13, #24) | 22 | 5 | 5 | **32 SP** |
+| **Aadish Sarin** | `PES2UG24CS007` | **Team & QA Lead:** Module M2 (Exam Lifecycle, Question Bank), Updated Test Cases, Unit Test Report | **7 Issues** (#7, #8, #9, #10, #14, #26, #27) | 21 | 3 | 5 | **29 SP** |
+| **Aditya Rao** | `PES2UG24CS034` | **DevOps Lead:** Module M3 (Delivery Engine, Timer, Auto-save), Database Schema & Seed, System Validation | **7 Issues** (#2, #11, #12, #15, #16, #17, #18) | 9 | 16 | 5 | **30 SP** |
+| **Akshansh Agrawal** | `PES2UG24CS045` | **Performance & UX Lead:** Module M4 (Auto-Grading, Analytics), UI Shell, JMeter Benchmark, Code Coverage | **7 Issues** (#19, #20, #21, #22, #23, #25, #32) | 0 | 28 | 5 | **33 SP** |
+| **Team Total** | — | — | **28 Issues** | **52 SP** | **52 SP** | **20 SP** | **124 SP** |
 
 ---
 

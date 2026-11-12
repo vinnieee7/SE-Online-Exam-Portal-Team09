@@ -68,6 +68,17 @@
 
 ---
 
+### 🧪 Column 3: Sprint 3 Delivered (02 Nov – 06 Nov 2026) — 20 SP [DONE]
+
+| Task ID | Type | Key | Title | Assignee | Points | Verification Deliverable |
+| :-: | :-: | :-: | :--- | :--- | :-: | :-: |
+| **#S3-01** | `test` | `OEP-QA-02` | M1 Unit Tests & Branch Coverage Analysis | `@vinnieee7` | 5 SP | ✅ [`BRANCH_COVERAGE_REPORT.md`](BRANCH_COVERAGE_REPORT.md) |
+| **#S3-02** | `test` | `OEP-QA-03` | M2 Unit Tests & Updated Test Case Document| `@aadishs-364` | 5 SP | ✅ [`UPDATED_TEST_CASES.md`](UPDATED_TEST_CASES.md) & [`UNIT_TEST_REPORT.md`](UNIT_TEST_REPORT.md) |
+| **#S3-03** | `test` | `OEP-QA-04` | M3 Unit Tests & System Validation Report | `@aditya-130906` | 5 SP | ✅ [`SYSTEM_VALIDATION_REPORT.md`](SYSTEM_VALIDATION_REPORT.md) |
+| **#S3-04** | `test` | `OEP-QA-05` | M4 Unit Tests & Code Coverage Report | `@akshagra` | 5 SP | ✅ [`CODE_COVERAGE_REPORT.md`](CODE_COVERAGE_REPORT.md) |
+
+---
+
 ## 🔍 Filtered Board by Team Member
 
 ### 👨‍💻 A S Vincent (`@vinnieee7`) — 7 Issues | 27 SP

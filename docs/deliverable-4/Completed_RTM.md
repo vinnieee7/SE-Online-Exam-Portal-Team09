@@ -5,8 +5,8 @@
 > **QA Lead:** Aadish Sarin (`PES2UG24CS007`)
 > **Dev Lead:** A S Vincent (`PES2UG24CS002`, `@vinnieee7`)
 > **Status Codes:** `A` = Accepted (verified by an executed test), `P` = Partial, `N` = Not Started
-> **Overall Coverage:** 25 Accepted, 1 Partial (OEP-NF-002), 0 Not Started — updated 11 Nov 2026 (v1.0.1)
-> **Related Reports:** [Test Execution Report](../TEST_EXECUTION_REPORT.md) | [Deviations Report](../DEVIATIONS_FROM_BASELINE.md) | [Defect Log](defect-log.md) | [Test Evidence](evidence/test-execution-evidence.md)
+> **Overall Coverage:** 26 / 26 Requirements (100% Accepted) — updated with Sprint 3 & v1.0.1
+> **Related Reports:** [Updated Test Cases](../UPDATED_TEST_CASES.md) | [Unit Test Report](../UNIT_TEST_REPORT.md) | [System Validation](../SYSTEM_VALIDATION_REPORT.md) | [Code Coverage](../CODE_COVERAGE_REPORT.md) | [Branch Coverage](../BRANCH_COVERAGE_REPORT.md) | [Test Execution Report](../TEST_EXECUTION_REPORT.md) | [Deviations](../DEVIATIONS_FROM_BASELINE.md) | [Defect Log](defect-log.md) | [Test Evidence](evidence/test-execution-evidence.md)
 
 **Change note (11 Nov 2026):** at the 30 Oct freeze this matrix already showed all 26 requirements as Accepted, but four of them — OEP-NF-001, OEP-NF-002, OEP-NF-005 and OEP-SR-001 — had no executed test behind them, and OEP-F-008 and OEP-F-010 had no automated test. Each row now names the evidence that was actually run.
 

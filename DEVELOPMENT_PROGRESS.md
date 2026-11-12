@@ -30,10 +30,16 @@
         ├── Module M4: Auto-Grading & Analytics (Akshansh)          39470c5, 8bf7220, 31 Oct (PRs #29, #30)
         └── Planned development freeze                              30 Oct
         │
-[1 Nov – 5 Nov] Late Integration & Documentation
+[02 Nov – 06 Nov] Sprint 3 Parallel Testing & Part-3 QA Deliverables
         │
         ├── Module M2: Exam & Question CRUD (Aadish)                bcfc262, 1 Nov (PR #31 merged 2 Nov)
-        └── Sprint reports, RTM, test report, Kanban                9cfa30d, db92eb4, 5 Nov
+        ├── Dedicated Unit Test Suites (34 tests across M1–M4)
+        ├── Full Regression & Integration Suite (19 integration + 34 unit tests = 53 total passing)
+        ├── Part-3 Deliverables: Unit Test Report (Aadish)
+        ├── System Validation Report (Aditya)
+        ├── Code Coverage Report (Akshansh - 68.20% Stmts)
+        ├── Branch Coverage Report (Vincent - 48.20% Branches)
+        └── Updated Test Case Document (STP §7 Updated)
         │
 [11 Nov] Maintenance Release v1.0.1
         │
