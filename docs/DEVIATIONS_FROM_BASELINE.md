@@ -7,7 +7,7 @@
 > **DevOps Lead:** Aditya Rao (`PES2UG24CS034`)  
 > **Performance Lead:** Akshansh Agrawal (`PES2UG24CS045`)  
 > **Repository:** [https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09](https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09)  
-> **Baseline References:** SRS v1.1, SAD v1.0 and STP v1.0 (submitted separately; not stored in this repository)
+> **Baseline References:** [SRS v1.1](baseline/SRS_Online_Exam_Portal_Team9.pdf), [SAD v1.0](baseline/SAD_Online_Exam_Portal_Team9.pdf) and [STP v1.0](baseline/STP_Online_Exam_Portal_Team9.pdf) (the versions submitted in September 2026, stored in `docs/baseline/`)
 
 ---
 

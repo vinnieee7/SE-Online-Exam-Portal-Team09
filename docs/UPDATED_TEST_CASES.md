@@ -8,7 +8,7 @@
 > **DevOps Lead:** Aditya Rao (`PES2UG24CS034`, `@aditya-130906`)  
 > **Performance Lead:** Akshansh Agrawal (`PES2UG24CS045`, `@akshagra`)  
 > **Repository:** [https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09](https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09)  
-> **Baseline Reference:** [Software Test Plan (STP v1.0)](deliverable-3/09_PES2UG24CS002_TEST.pdf)  
+> **Baseline Reference:** [Software Test Plan (STP v1.0)](baseline/STP_Online_Exam_Portal_Team9.pdf)  
 
 ---
 

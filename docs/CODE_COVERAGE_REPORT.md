@@ -1,93 +1,76 @@
 # Code Coverage Report (Mini-Project Part-3 §2.b.iii)
 
-> **Course:** Software Engineering | **Section:** A | **Team Number:** 9  
-> **Target System:** Online Exam Portal (OEP)  
-> **Testing Window:** 2 November 2026 – 6 November 2026 (Sprint 3)  
-> **QA Lead:** Aadish Sarin (`PES2UG24CS007`)  
-> **Dev Lead:** A S Vincent (`PES2UG24CS002`, `@vinnieee7`)  
-> **DevOps Lead:** Aditya Rao (`PES2UG24CS034`)  
-> **Performance Lead:** Akshansh Agrawal (`PES2UG24CS045`)  
-> **Coverage Instrumentation:** Istanbul / Jest v30.5.2 Built-in Coverage Engine  
-> **Repository:** [https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09](https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09)  
+> **Course:** Software Engineering | **Section:** A | **Team Number:** 9
+> **Target System:** Online Exam Portal (OEP)
+> **Testing Window:** 2 – 6 November 2026 (Sprint 3); results regenerated 12 November 2026 after the v1.0.1 fixes
+> **Team:** Aadish Sarin (`PES2UG24CS007`, QA Lead) · A S Vincent (`PES2UG24CS002`, Dev Lead) · Aditya Rao (`PES2UG24CS034`, DevOps Lead) · Akshansh Agrawal (`PES2UG24CS045`, Performance Lead)
+> **Code tested:** commit `57e01fd` on `main` · **Repository:** https://github.com/vinnieee7/SE-Online-Exam-Portal-Team09
+
 
 ---
 
-## 1. Executive Summary
+## 1. Summary
 
-This report provides the formal quantitative code coverage analysis generated from executing all 53 automated tests (34 unit tests and 19 integration tests) across the Online Exam Portal backend codebase.
+Coverage was measured with Jest's built-in Istanbul instrumentation while running **all 85 automated tests** (5 unit suites + 3 integration suites) against the backend in `backend/src`.
 
-- **Total Test Suites Executed:** 6 suites (`api.test.js` + 5 unit test suites)
-- **Total Test Assertions Passed:** 53 / 53 (100% Pass Rate)
-- **Overall Statement Coverage:** **68.20%**
-- **Overall Function Coverage:** **70.76%**
-- **Overall Line Coverage:** **67.75%**
-- **Overall Branch Coverage:** **48.20%**
-- **Routing & Endpoints Coverage:** **98.27%**
+| Metric | Covered / total | Coverage |
+| :--- | ---: | ---: |
+| Statements | 602 / 796 | **75.62%** |
+| Lines | 574 / 758 | **75.72%** |
+| Functions | 61 / 77 | **79.22%** |
+| Branches | 247 / 413 | **59.80%** (see Branch Coverage Report) |
 
----
+Command: `cd backend && npx jest --runInBand --coverage` — run 12 November 2026, commit `57e01fd`, 85/85 tests passed. The full interactive HTML report is in `docs/coverage/index.html`.
 
-## 2. Quantitative Coverage Matrix by Component
+## 2. Coverage by file
 
-```
-------------------------|---------|----------|---------|---------|--------------------------------------------------
-File                    | % Stmts | % Branch | % Funcs | % Lines | Component Role
-------------------------|---------|----------|---------|---------|--------------------------------------------------
-All files               |   68.20 |    48.20 |   70.76 |   67.75 | Full Backend Application
- src                    |   76.47 |    50.00 |   33.33 |   75.00 | Application Bootstrapper
-  app.js                |   76.47 |    50.00 |   33.33 |   75.00 | Express App Setup & Route Mounting
- src/config             |   83.33 |    53.84 |  100.00 |   92.59 | Database Connector
-  db.js                 |   83.33 |    53.84 |  100.00 |   92.59 | SQLite Connection Pool & Query Promisifiers
- src/db                 |   95.29 |    90.00 |   60.00 |   95.00 | Database Schema & Seed Data
-  seed.js               |   95.29 |    90.00 |   60.00 |   95.00 | STP §6.4 Reproducible Seed Generator
- src/middleware         |   81.25 |    67.85 |  100.00 |   81.25 | Security, RBAC & Logging
-  auth.js               |   80.76 |    75.00 |  100.00 |   80.76 | JWT Token Verification & requireRole Guards
-  logger.js             |   83.33 |    58.33 |  100.00 |   83.33 | Audit Action Dispatcher & IP Resolver
- src/routes             |   98.27 |   100.00 |  100.00 |   98.27 | REST API Routing Layer
-  auditRoutes.js        |   90.90 |   100.00 |  100.00 |   90.90 | Security Audit Endpoints
-  authRoutes.js         |  100.00 |   100.00 |  100.00 |  100.00 | Authentication & Registration Endpoints
-  deliveryRoutes.js     |  100.00 |   100.00 |  100.00 |  100.00 | Exam Delivery & Auto-Save Endpoints
-  evalRoutes.js         |  100.00 |   100.00 |  100.00 |  100.00 | Evaluation, Scorecards & Analytics Endpoints
-  examRoutes.js         |  100.00 |   100.00 |  100.00 |  100.00 | Exam & Question Bank CRUD Endpoints
- src/controllers        |   57.74 |    45.04 |   63.41 |   56.84 | Core Module Business Logic
-  evalController.js     |   78.51 |    64.28 |   85.71 |   77.60 | Auto-Grading, Scorecards & Class Analytics
-  deliveryController.js |   66.98 |    39.70 |   80.00 |   66.66 | Candidate Delivery, Timer & Auto-Save
-  authController.js     |   46.60 |    36.17 |   42.85 |   46.60 | Registration, Login & Password Reset
-  examController.js     |   40.52 |    38.80 |   46.66 |   39.59 | Exam CRUD, Question Bank & Shuffle
-------------------------|---------|----------|---------|---------|--------------------------------------------------
-```
+| File | Role | Stmts % | Branch % | Funcs % | Lines % |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+| `src/app.js` | Express app setup and route mounting | 84.09 | 62.50 | 80.00 | 86.11 |
+| `src/secureServer.js` | HTTPS server (TLS 1.2+) | 83.33 | 100.00 | 50.00 | 83.33 |
+| `src/config/db.js` | SQLite connection and query helpers | 84.84 | 61.53 | 100.00 | 93.33 |
+| `src/controllers/authController.js` | Register, login, password reset, user admin | 65.09 | 61.70 | 57.14 | 65.09 |
+| `src/controllers/deliveryController.js` | Start attempt, timer, auto-save, submit | 72.80 | 53.84 | 85.71 | 72.56 |
+| `src/controllers/evalController.js` | Grading, scorecards, analytics | 78.67 | 64.28 | 85.71 | 77.77 |
+| `src/controllers/examController.js` | Exams, question bank, shuffle | 58.19 | 52.66 | 75.00 | 57.83 |
+| `src/db/seed.js` | Database schema and seed data | 95.29 | 90.00 | 60.00 | 95.00 |
+| `src/middleware/auth.js` | JWT check and role guard | 92.59 | 93.75 | 100.00 | 92.59 |
+| `src/middleware/logger.js` | Audit log writer | 83.33 | 66.66 | 100.00 | 83.33 |
+| `src/routes/auditRoutes.js` | Audit log route | 91.66 | 100.00 | 100.00 | 91.66 |
+| `src/routes/authRoutes.js` | Auth routes | 100.00 | 100.00 | 100.00 | 100.00 |
+| `src/routes/deliveryRoutes.js` | Delivery routes | 100.00 | 100.00 | 100.00 | 100.00 |
+| `src/routes/evalRoutes.js` | Evaluation routes | 100.00 | 100.00 | 100.00 | 100.00 |
+| `src/routes/examRoutes.js` | Exam routes | 100.00 | 100.00 | 100.00 | 100.00 |
+| `src/utils/serverError.js` | Generic 500 response helper | 33.33 | 100.00 | 0.00 | 33.33 |
+| **All files** | | **75.62** | **59.80** | **79.22** | **75.72** |
 
----
+The React frontend is not instrumented; it was tested in the browser (`TC-Take-06`) and by the accessibility audit.
 
-## 3. Analysis of Critical Layers
+## 3. What each test layer adds
 
-### 3.1 Security & Routing Layer (98.27% - 100%)
-- All Express routers (`authRoutes.js`, `examRoutes.js`, `deliveryRoutes.js`, `evalRoutes.js`, `auditRoutes.js`) achieved **100% statement and function coverage**.
-- Middleware authorization guards (`auth.js`) achieved **80.76% statement coverage** and **100% function coverage**, ensuring that unauthenticated requests and role mismatches are verified on every endpoint.
+Measured by running Jest with coverage on each subset of suites:
 
-### 3.2 Evaluation & Grading Engine (78.51%)
-- The evaluation engine (`evalController.js`) achieved **78.51% statement coverage** and **85.71% function coverage**.
-- Both the automated objective scoring pipeline (MCQ/TrueFalse) and subjective grading queues are exercised by integration and unit test harnesses.
+| Suites run | Tests | Statements | Branches |
+| :--- | ---: | ---: | ---: |
+| Unit suites only | 34 | 19.51% | 5.23% |
+| Unit + `api.test.js` (the Sprint 3 baseline) | 53 | 69.11% | 48.42% |
+| **All suites (unit + api + security + verification)** | **85** | **75.62%** | **59.80%** |
 
-### 3.3 Delivery & Timer Engine (66.98%)
-- `deliveryController.js` achieved **80% function coverage** and **66.98% statement coverage**.
-- Timer boundary conditions, answer stripping, and periodic answer persistence logic are fully tested.
+The unit suites mostly test rules in isolation, so most coverage comes from the integration suites, which drive the real controllers over HTTP. The security and verification suites added in v1.0.1 raised statement coverage by 6.5 points and branch coverage by 11.4 points.
 
----
+## 4. Code that is not covered, and why
 
-## 4. Uncovered Code Analysis & Safety Justifications
+| Where | Not covered | Reason / plan |
+| :--- | :--- | :--- |
+| `examController.js` `updateExam`, `deleteExam`, `deleteQuestion` | Editing/publishing and deleting exams and questions | Works in the Instructor screen (shown in the demo) but has **no automated test yet** — the largest gap |
+| `authController.js` `updateUserStatus` | Admin changing a role or locking a user through the API | `TC-Sec-03f` locks the account directly in the database; an API-level test is still to be added |
+| `evalController.js` `getMyScorecard` | Student opening a scorecard by exam id | Used by the dashboard; covered only through the browser |
+| Validation branches in all controllers | Missing-field 400s, "exam not started / already ended", "not published" | Only the main rejections (end before start, IDOR, unknown question id) are tested |
+| `catch` blocks → `serverError.js` | Database failure responses | Need a forced database error; not simulated |
+| `deliveryController.js` lines 247–282, `app.js` lines 47–51 | Fallback code from before the modules were merged | Unreachable now that all modules are present; can be deleted |
 
-The remaining uncovered statements in controllers represent:
-1. **Database Error Catch Blocks (`catch (err)`):** Low-level SQL driver connection drop handlers that trigger only during physical SQLite disk corruption or database lock contention.
-2. **Interactive UI Redundant Queries:** Secondary pagination queries exercised interactively via the React frontend portal that do not alter business calculations.
-3. **Redundant Admin Fallbacks:** Secondary role queries guarded by upstream middleware in Express.
+## 5. Conclusion
 
-All mission-critical business paths, cryptographic routines, security policies, and student assessment flows have **100% verification coverage**.
+Backend statement coverage is **75.62%** and every route file is at 100%. All requirement-critical paths named in the RTM have an executed test. The gaps above are the next tests to write; none of them hides a known defect.
 
----
-
-## 5. Formal QA Sign-Off
-
-- **Aadish Sarin (`PES2UG24CS007`)** — *QA Lead*
-- **A S Vincent (`PES2UG24CS002`, `@vinnieee7`)** — *Dev Lead & Facilitator*
-- **Akshansh Agrawal (`PES2UG24CS045`)** — *Performance Lead*
-
+*Prepared by Aadish Sarin (QA Lead).*

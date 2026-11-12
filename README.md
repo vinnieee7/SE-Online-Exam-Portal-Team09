@@ -122,11 +122,27 @@ All accounts share the default test password: `Password@123`
 
 4. **Sprint-3 / Mini-Project Part-3 QA Mandate [2nd Nov to 6th Nov 2026]:**
    - **Test Cases Updation:** [UPDATED_TEST_CASES.md](docs/UPDATED_TEST_CASES.md) updating all STP test cases with sprint and regression additions.
-   - **Unit Test Report:** [UNIT_TEST_REPORT.md](docs/UNIT_TEST_REPORT.md) detailing 34 unit tests across 5 suites (100% pass).
-   - **System Validation Report:** [SYSTEM_VALIDATION_REPORT.md](docs/SYSTEM_VALIDATION_REPORT.md) with 4 scenario-based end-to-end integration workflows.
-   - **Code Coverage Report:** [CODE_COVERAGE_REPORT.md](docs/CODE_COVERAGE_REPORT.md) recording 68.20% statements, 70.76% functions, 67.75% lines.
-   - **Branch Coverage Report:** [BRANCH_COVERAGE_REPORT.md](docs/BRANCH_COVERAGE_REPORT.md) recording 48.20% condition/decision branch coverage.
+   - **Unit Test Report:** [UNIT_TEST_REPORT.md](docs/UNIT_TEST_REPORT.md) ([PDF](docs/reports/Unit_Testing_Report_Team9.pdf)) — 34 unit tests across 5 suites, all passing.
+   - **System Testing Report:** [SYSTEM_VALIDATION_REPORT.md](docs/SYSTEM_VALIDATION_REPORT.md) ([PDF](docs/reports/System_Testing_Report_Team9.pdf)) — 51 API system tests, browser test, 4 end-to-end scenarios, load, security and accessibility results.
+   - **Code Coverage Report:** [CODE_COVERAGE_REPORT.md](docs/CODE_COVERAGE_REPORT.md) ([PDF](docs/reports/Code_Coverage_Report_Team9.pdf)) — 75.62% statements, 79.22% functions, 75.72% lines over all 85 tests; [HTML report](docs/coverage-report/index.html).
+   - **Branch Coverage Report:** [BRANCH_COVERAGE_REPORT.md](docs/BRANCH_COVERAGE_REPORT.md) ([PDF](docs/reports/Branch_Coverage_Report_Team9.pdf)) — 59.80% branch coverage (247 of 413).
    - **Sprint 3 Parallel QA Execution:** [SPRINT_3_REPORT.md](SPRINT_3_REPORT.md) (20 SP completed).
+
+---
+
+## 📄 Submission Documents (PDF)
+
+| Document | File |
+| :--- | :--- |
+| Software Requirements Specification (SRS v1.1) | [docs/baseline/SRS_Online_Exam_Portal_Team9.pdf](docs/baseline/SRS_Online_Exam_Portal_Team9.pdf) |
+| Software Architecture & Design (SAD v1.0) | [docs/baseline/SAD_Online_Exam_Portal_Team9.pdf](docs/baseline/SAD_Online_Exam_Portal_Team9.pdf) |
+| Software Test Plan (STP v1.0) | [docs/baseline/STP_Online_Exam_Portal_Team9.pdf](docs/baseline/STP_Online_Exam_Portal_Team9.pdf) |
+| Unit Testing Report | [docs/reports/Unit_Testing_Report_Team9.pdf](docs/reports/Unit_Testing_Report_Team9.pdf) |
+| System Testing Report | [docs/reports/System_Testing_Report_Team9.pdf](docs/reports/System_Testing_Report_Team9.pdf) |
+| Code Coverage Report | [docs/reports/Code_Coverage_Report_Team9.pdf](docs/reports/Code_Coverage_Report_Team9.pdf) |
+| Branch Coverage Report | [docs/reports/Branch_Coverage_Report_Team9.pdf](docs/reports/Branch_Coverage_Report_Team9.pdf) |
+
+The SRS, SAD and STP are the versions submitted in September 2026; changes made since are recorded in [DEVIATIONS_FROM_BASELINE.md](docs/DEVIATIONS_FROM_BASELINE.md).
 
 ---
 
