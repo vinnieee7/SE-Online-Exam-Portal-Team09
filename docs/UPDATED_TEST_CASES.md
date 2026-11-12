@@ -20,10 +20,14 @@ This document represents the formal update to the Software Test Plan (STP v1.0) 
 3. Addition of granular unit testing suites covering cryptographic operations, shuffle uniformity, timer calculations, and item difficulty algorithms.
 
 ### Summary of Test Case Counts
-- **Total Test Cases Documented & Executed:** 53 test cases
-- **Unit Test Cases:** 34 tests (`tests/unit/*.test.js`)
-- **System Integration Test Cases:** 19 tests (`tests/integration/api.test.js`)
-- **Execution Pass Rate:** **100% (53 / 53 Passed)**
+- **Total Automated Test Cases Executed:** 85 test cases (8 Jest suites)
+- **Unit Test Cases:** 34 tests (`tests/unit/*.unit.test.js`)
+- **System / Integration Test Cases:** 51 tests
+  - 19 functional API tests (`tests/integration/api.test.js`)
+  - 19 security tests (`tests/integration/security.test.js`)
+  - 13 verification tests (`tests/integration/verification.test.js`)
+- **Execution Pass Rate:** **100% (85 / 85 Passed)**
+- **Coverage (all 85 tests):** 75.62% statements, 59.80% branches — see [Code Coverage Report](reports/Code_Coverage_Report_Team9.pdf)
 
 ---
 
@@ -117,7 +121,7 @@ This document represents the formal update to the Software Test Plan (STP v1.0) 
 
 ## 4. Verification Sign-Off
 
-All 53 test cases documented above are automated in the project repository and execute on every commit via GitHub Actions CI:
+All 85 test cases (the cases tabulated above plus the security and verification suites) are automated in the project repository and execute on every commit via GitHub Actions CI:
 - **QA Lead:** Aadish Sarin (`PES2UG24CS007`) — *Verified & Approved*
 - **Dev Lead:** A S Vincent (`PES2UG24CS002`) — *Verified & Approved*
 
